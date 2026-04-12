@@ -24,6 +24,23 @@ export function initTelegram() {
 
   // ── Apply safe area CSS variables ──
   applySafeAreas();
+
+  // ── Prompt "Add to Home Screen" (once per user) ──
+  promptHomeScreen();
+}
+
+function promptHomeScreen() {
+  if (!tg?.addToHomeScreen) return;
+
+  // Only prompt once — use localStorage to track
+  const key = 'yap_homescreen_prompted';
+  if (localStorage.getItem(key)) return;
+
+  // Small delay so app loads first
+  setTimeout(() => {
+    tg.addToHomeScreen();
+    localStorage.setItem(key, '1');
+  }, 2000);
 }
 
 function applySafeAreas() {
