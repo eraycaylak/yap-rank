@@ -3,997 +3,597 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YAP! — Rank & İlerleme</title>
+  <title>YAP! — Lider Tablosu & Rank</title>
+  <meta name="description" content="YAP! Habit Bot — Gerçek kullanıcı sıralamaları ve ilerleme takibi" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Base ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:         #06080f;
-      --bg2:        #0d1117;
-      --panel:      rgba(16, 22, 36, 0.85);
-      --border:     rgba(99, 179, 255, 0.12);
-      --accent:     #3b82f6;
-      --accent2:    #8b5cf6;
-      --gold:       #f59e0b;
-      --gold2:      #fbbf24;
-      --red:        #ef4444;
-      --green:      #22c55e;
-      --cyan:       #06b6d4;
-      --text:       #e2e8f0;
-      --muted:      #64748b;
-      --glow-blue:  0 0 40px rgba(59,130,246,0.4);
-      --glow-gold:  0 0 40px rgba(245,158,11,0.4);
-      --glow-purple:0 0 40px rgba(139,92,246,0.4);
+      --bg:       #06080f;
+      --panel:    rgba(14, 20, 34, 0.9);
+      --border:   rgba(99,179,255,0.1);
+      --accent:   #3b82f6;
+      --accent2:  #8b5cf6;
+      --gold:     #f59e0b;
+      --silver:   #94a3b8;
+      --bronze:   #cd7c2f;
+      --red:      #ef4444;
+      --green:    #22c55e;
+      --cyan:     #06b6d4;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
     }
+    html,body { min-height:100vh; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden; }
 
-    html, body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* ── Animated BG ──────────────────────────────────────────── */
+    /* BG Effects */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
       background:
-        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(139,92,246,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(ellipse 70% 50% at 15% 25%, rgba(59,130,246,.09) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 85% 70%, rgba(139,92,246,.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 50% 100%, rgba(245,158,11,.05) 0%, transparent 60%);
     }
-
-    /* ── Grid BG ──────────────────────────────────────────────── */
     .grid-bg {
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image: linear-gradient(rgba(59,130,246,.035) 1px,transparent 1px),
+                        linear-gradient(90deg,rgba(59,130,246,.035) 1px,transparent 1px);
       background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
     }
-
-    /* ── Floating Particles ───────────────────────────────────── */
-    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+    .particles { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
     .particle {
-      position: absolute;
-      border-radius: 50%;
-      animation: float-particle linear infinite;
-      opacity: 0;
+      position:absolute; border-radius:50%;
+      animation:float-p linear infinite; opacity:0;
     }
-    @keyframes float-particle {
-      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
-      10%  { opacity: 1; }
-      90%  { opacity: 0.6; }
-      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    @keyframes float-p {
+      0%   { transform:translateY(100vh) scale(0); opacity:0; }
+      10%  { opacity:.8; }
+      90%  { opacity:.4; }
+      100% { transform:translateY(-10vh) scale(1); opacity:0; }
     }
 
-    /* ── Layout ───────────────────────────────────────────────── */
-    .app {
-      position: relative;
-      z-index: 2;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
-    }
+    /* Layout */
+    .app { position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:2rem 1.5rem 5rem; animation:fadein .7s ease; }
+    @keyframes fadein { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
 
-    /* ── Header ───────────────────────────────────────────────── */
-    .header {
-      text-align: center;
-      margin-bottom: 3rem;
-      position: relative;
+    /* Header */
+    .header { text-align:center; margin-bottom:2.5rem; }
+    .logo {
+      font-family:'Orbitron',monospace; font-size:clamp(2.2rem,5vw,3.5rem); font-weight:900;
+      background:linear-gradient(135deg,#3b82f6,#8b5cf6,#06b6d4);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      filter:drop-shadow(0 0 30px rgba(59,130,246,.5));
+      animation:logo-glow 3s ease-in-out infinite;
     }
-    .header-logo {
-      font-family: 'Orbitron', monospace;
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      font-weight: 900;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 0.1em;
-      filter: drop-shadow(0 0 30px rgba(59,130,246,0.5));
-      animation: logo-pulse 3s ease-in-out infinite;
+    @keyframes logo-glow {
+      0%,100%{filter:drop-shadow(0 0 20px rgba(59,130,246,.4))}
+      50%{filter:drop-shadow(0 0 50px rgba(139,92,246,.7))}
     }
-    @keyframes logo-pulse {
-      0%, 100% { filter: drop-shadow(0 0 20px rgba(59,130,246,0.4)); }
-      50%       { filter: drop-shadow(0 0 50px rgba(139,92,246,0.7)); }
-    }
-    .header-sub {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 1rem;
-      color: var(--muted);
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      margin-top: 0.4rem;
-    }
-    .header-line {
-      width: 200px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
-      margin: 1.5rem auto 0;
-      animation: line-glow 2s ease-in-out infinite alternate;
-    }
-    @keyframes line-glow {
-      from { opacity: 0.5; }
-      to   { opacity: 1; box-shadow: 0 0 20px var(--accent); }
-    }
+    .logo-sub { font-family:'Rajdhani',sans-serif; font-size:.9rem; color:var(--muted); letter-spacing:.4em; text-transform:uppercase; margin-top:.3rem; }
+    .divider { width:200px; height:1px; background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent); margin:1.2rem auto 0; animation:line-glow 2s ease-in-out infinite alternate; }
+    @keyframes line-glow { from{opacity:.5} to{opacity:1; box-shadow:0 0 15px var(--accent)} }
 
-    /* ── Main Grid ────────────────────────────────────────────── */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+    /* Live badge */
+    .live-badge {
+      display:inline-flex; align-items:center; gap:.4rem;
+      background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.3);
+      border-radius:99px; padding:.25rem .75rem; font-size:.7rem;
+      font-family:'Rajdhani',sans-serif; font-weight:600; color:var(--green);
+      letter-spacing:.15em; text-transform:uppercase; margin-top:.75rem;
     }
-    @media (max-width: 700px) {
-      .main-grid { grid-template-columns: 1fr; }
-    }
+    .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:dot-pulse 1.5s ease infinite; }
+    @keyframes dot-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
 
-    /* ── Panels ───────────────────────────────────────────────── */
+    /* Panel */
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 1.25rem;
-      padding: 1.75rem;
-      backdrop-filter: blur(20px);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
+      background:var(--panel); border:1px solid var(--border); border-radius:1.25rem;
+      padding:1.75rem; backdrop-filter:blur(20px); position:relative; overflow:hidden;
+      transition:box-shadow .3s, transform .3s;
     }
-    .panel:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(59,130,246,0.1);
-    }
-    .panel.full-width { grid-column: 1 / -1; }
-
-    /* Panel corner accents */
+    .panel:hover { box-shadow:0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(59,130,246,.08); }
     .panel::before, .panel::after {
-      content: '';
-      position: absolute;
-      width: 20px; height: 20px;
-      border-color: var(--accent);
-      border-style: solid;
-      opacity: 0.5;
+      content:''; position:absolute; width:18px; height:18px; border-color:var(--accent); border-style:solid; opacity:.4;
     }
-    .panel::before { top: 10px; left: 10px; border-width: 2px 0 0 2px; border-radius: 2px 0 0 0; }
-    .panel::after  { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; border-radius: 0 0 2px 2px; }
+    .panel::before { top:10px; left:10px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
+    .panel::after  { bottom:10px; right:10px; border-width:0 2px 2px 0; }
 
     .panel-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-family:'Rajdhani',sans-serif; font-size:.7rem; font-weight:700; letter-spacing:.3em;
+      text-transform:uppercase; color:var(--muted); margin-bottom:1.25rem;
+      display:flex; align-items:center; gap:.5rem;
     }
-    .panel-title::before {
-      content: '';
-      display: inline-block;
-      width: 8px; height: 8px;
-      background: var(--accent);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--accent);
-      animation: dot-blink 2s ease infinite;
-    }
-    @keyframes dot-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
+    .panel-title::before { content:''; width:7px; height:7px; background:var(--accent); border-radius:50%; box-shadow:0 0 8px var(--accent); flex-shrink:0; animation:dot-pulse 2s ease infinite; }
 
-    /* ── RANK CARD ────────────────────────────────────────────── */
-    .rank-card {
-      text-align: center;
-      position: relative;
+    /* Top 3 Podium */
+    .podium-section { margin-bottom:1.5rem; }
+    .podium {
+      display:flex; align-items:flex-end; justify-content:center; gap:1rem;
+      padding:1.5rem 1rem 0;
     }
-    .rank-card.full-width { grid-column: 1 / -1; }
+    .podium-place {
+      display:flex; flex-direction:column; align-items:center; gap:.5rem;
+      flex:1; max-width:200px;
+    }
+    .podium-avatar {
+      width:70px; height:70px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center; font-size:1.8rem;
+      position:relative; border:2px solid;
+      box-shadow: 0 0 30px currentColor;
+      animation:avatar-float 3s ease-in-out infinite;
+    }
+    .podium-place:nth-child(2) .podium-avatar { width:88px; height:88px; font-size:2.2rem; animation-delay:-.5s; }
+    .podium-place:nth-child(3) .podium-avatar { animation-delay:-1s; }
+    @keyframes avatar-float {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
+    }
+    .p1 { color:var(--gold);   border-color:var(--gold);   background:rgba(245,158,11,.1); }
+    .p2 { color:#c0c0c0; border-color:#aaa;  background:rgba(160,160,160,.1); }
+    .p3 { color:var(--bronze); border-color:var(--bronze); background:rgba(205,124,47,.1); }
 
-    /* 3D Rank Badge */
-    .rank-badge-3d {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 180px;
-      height: 180px;
-      margin: 0 auto 1.5rem;
-      transform-style: preserve-3d;
-      animation: badge-float 4s ease-in-out infinite;
-    }
-    @keyframes badge-float {
-      0%, 100% { transform: rotateY(-8deg) rotateX(5deg) translateY(0); }
-      50%       { transform: rotateY(8deg) rotateX(-5deg) translateY(-10px); }
-    }
+    .crown { position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:1.2rem; animation:crown-spin 4s ease-in-out infinite; }
+    @keyframes crown-spin { 0%,100%{transform:translateX(-50%) rotate(-5deg)} 50%{transform:translateX(-50%) rotate(5deg)} }
 
-    .badge-ring-outer {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 3px solid;
-      animation: ring-spin 8s linear infinite;
+    .podium-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem; text-align:center; }
+    .podium-xp {
+      font-family:'Orbitron',monospace; font-size:.8rem; font-weight:700; text-align:center;
     }
-    .badge-ring-outer.ring1 {
-      border-color: transparent var(--gold) transparent var(--gold);
-      filter: drop-shadow(0 0 10px var(--gold));
-    }
-    .badge-ring-outer.ring2 {
-      inset: 10px;
-      border-color: transparent var(--accent) transparent var(--accent);
-      animation: ring-spin 5s linear infinite reverse;
-      opacity: 0.6;
-    }
-    @keyframes ring-spin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
+    .podium-rank-label { font-size:.65rem; letter-spacing:.15em; color:var(--muted); text-transform:uppercase; }
 
-    .badge-inner {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.15), rgba(0,0,0,0.5));
-      border: 2px solid rgba(245,158,11,0.4);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow:
-        inset 0 2px 10px rgba(255,255,255,0.1),
-        inset 0 -4px 20px rgba(0,0,0,0.5),
-        0 0 40px rgba(245,158,11,0.3),
-        0 10px 30px rgba(0,0,0,0.5);
+    .podium-block {
+      width:100%; border-radius:.75rem .75rem 0 0; display:flex; align-items:center; justify-content:center;
+      font-family:'Orbitron',monospace; font-size:1.4rem; font-weight:900;
+      border-top:2px solid; padding:.75rem 0;
     }
-    .badge-icon { font-size: 2rem; }
-    .badge-rank-name {
-      font-family: 'Orbitron', monospace;
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-top: 0.2rem;
-    }
-    .badge-level {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.8rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, var(--gold), #fff, var(--gold2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
+    .b1 { height:100px; background:linear-gradient(to top, rgba(245,158,11,.2), rgba(245,158,11,.05)); border-color:rgba(245,158,11,.4); color:var(--gold); }
+    .b2 { height:80px;  background:linear-gradient(to top, rgba(160,160,160,.15), rgba(160,160,160,.03)); border-color:rgba(160,160,160,.3); color:#aaa; }
+    .b3 { height:60px;  background:linear-gradient(to top, rgba(205,124,47,.15), rgba(205,124,47,.03)); border-color:rgba(205,124,47,.3); color:var(--bronze); }
 
-    /* 3D Shadow platform */
-    .badge-shadow {
-      position: absolute;
-      bottom: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 15px;
-      background: radial-gradient(ellipse, rgba(245,158,11,0.3), transparent 70%);
-      border-radius: 50%;
-      animation: shadow-pulse 4s ease-in-out infinite;
+    /* Leaderboard Table */
+    .lb-table { width:100%; border-collapse:collapse; }
+    .lb-table th {
+      font-family:'Rajdhani',sans-serif; font-size:.65rem; font-weight:600; letter-spacing:.25em;
+      text-transform:uppercase; color:var(--muted); padding:.5rem .75rem; text-align:left;
+      border-bottom:1px solid var(--border);
     }
-    @keyframes shadow-pulse {
-      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-      50%       { transform: translateX(-50%) scale(0.8); opacity: 0.3; }
+    .lb-table th:last-child, .lb-table td:last-child { text-align:right; }
+    .lb-row {
+      border-bottom:1px solid rgba(255,255,255,.04);
+      transition:background .2s;
+      animation:row-in .5s both;
     }
+    .lb-row:hover { background:rgba(59,130,246,.07); }
+    @keyframes row-in { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:none} }
+    .lb-row td { padding:.85rem .75rem; vertical-align:middle; }
 
-    .rank-title {
-      font-family: 'Orbitron', monospace;
-      font-size: clamp(1.1rem, 3vw, 1.4rem);
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--gold), var(--gold2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 15px rgba(245,158,11,0.5));
+    .rank-num {
+      font-family:'Orbitron',monospace; font-size:.9rem; font-weight:700; width:36px;
+      text-align:center;
     }
-    .rank-subtitle {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.25rem;
-      font-family: 'Rajdhani', sans-serif;
-    }
-    .rank-xp-display {
-      margin-top: 1rem;
-      font-family: 'Orbitron', monospace;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--cyan);
-      text-shadow: 0 0 20px var(--cyan);
-      counter-reset: xp;
-    }
-    .xp-label { font-size: 0.7rem; color: var(--muted); font-family: 'Rajdhani', sans-serif; letter-spacing: 0.2em; }
+    .r1 { color:var(--gold); text-shadow:0 0 12px var(--gold); }
+    .r2 { color:#c0c0c0; text-shadow:0 0 10px #aaa; }
+    .r3 { color:var(--bronze); text-shadow:0 0 10px var(--bronze); }
+    .rn { color:var(--muted); }
 
-    /* ── PROGRESS BAR (3D) ────────────────────────────────────── */
-    .progress-section { display: flex; flex-direction: column; gap: 1.25rem; }
+    .player-info { display:flex; align-items:center; gap:.75rem; }
+    .player-avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; border:1px solid rgba(255,255,255,.08); }
+    .player-name { font-weight:600; font-size:.95rem; }
+    .player-handle { font-size:.75rem; color:var(--muted); font-family:'Rajdhani',sans-serif; }
 
-    .progress-item {}
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
+    .level-chip {
+      display:inline-flex; align-items:center; gap:.25rem;
+      background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.25);
+      border-radius:99px; padding:.15rem .55rem;
+      font-family:'Orbitron',monospace; font-size:.6rem; color:var(--accent); white-space:nowrap;
     }
-    .progress-label {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-    }
-    .progress-value {
-      font-family: 'Orbitron', monospace;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
+    .xp-val { font-family:'Orbitron',monospace; font-size:.9rem; font-weight:700; color:var(--cyan); }
+    .streak-val { font-family:'Orbitron',monospace; font-size:.85rem; font-weight:700; }
+    .streak-val.hot { color:var(--gold); text-shadow:0 0 10px var(--gold); }
+    .streak-val.cold { color:var(--muted); }
 
-    /* 3D Progress Track */
-    .progress-track {
-      height: 14px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 99px;
-      border: 1px solid rgba(255,255,255,0.06);
-      position: relative;
-      overflow: hidden;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(255,255,255,0.03);
+    /* My rank bar */
+    .my-rank-card {
+      background:linear-gradient(135deg, rgba(59,130,246,.12), rgba(139,92,246,.08));
+      border:1px solid rgba(139,92,246,.3); border-radius:1rem; padding:1.25rem;
+      display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
     }
-    .progress-fill {
-      height: 100%;
-      border-radius: 99px;
-      position: relative;
-      transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
-      overflow: hidden;
-    }
-    /* 3D highlight on bar */
-    .progress-fill::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 40%;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
-      border-radius: 99px;
-    }
-    /* Animated shimmer */
-    .progress-fill::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%; right: 0; bottom: 0;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
-      animation: shimmer 2.5s infinite;
-    }
-    @keyframes shimmer { to { left: 200%; } }
+    .my-rank-pos { font-family:'Orbitron',monospace; font-size:2rem; font-weight:900; color:var(--accent2); text-shadow:0 0 20px var(--accent2); min-width:50px; }
+    .my-rank-info { flex:1; min-width:120px; }
+    .my-rank-name { font-weight:700; font-size:1.1rem; }
+    .my-rank-sub { font-size:.8rem; color:var(--muted); margin-top:.15rem; font-family:'Rajdhani',sans-serif; }
 
-    .bar-level  { background: linear-gradient(90deg, #3b82f6, #06b6d4); box-shadow: 0 0 15px rgba(59,130,246,0.5); }
-    .bar-seri   { background: linear-gradient(90deg, #f59e0b, #ef4444); box-shadow: 0 0 15px rgba(245,158,11,0.5); }
-    .bar-gorev  { background: linear-gradient(90deg, #22c55e, #06b6d4); box-shadow: 0 0 15px rgba(34,197,94,0.5); }
-    .bar-rozet  { background: linear-gradient(90deg, #8b5cf6, #ec4899); box-shadow: 0 0 15px rgba(139,92,246,0.5); }
+    /* Progress bar */
+    .progress-wrap { flex:2; min-width:160px; }
+    .prog-label { display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin-bottom:.35rem; font-family:'Rajdhani',sans-serif; letter-spacing:.1em; }
+    .prog-track {
+      height:10px; background:rgba(255,255,255,.05); border-radius:99px;
+      border:1px solid rgba(255,255,255,.04); overflow:hidden;
+      box-shadow:inset 0 2px 4px rgba(0,0,0,.4);
+    }
+    .prog-fill {
+      height:100%; border-radius:99px; position:relative; overflow:hidden;
+      transition:width 1.8s cubic-bezier(.22,1,.36,1);
+    }
+    .prog-fill::after { content:''; position:absolute; top:0; left:0; right:0; height:45%; background:linear-gradient(to bottom,rgba(255,255,255,.25),transparent); border-radius:99px; }
+    .prog-fill::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.15) 50%,transparent 100%); animation:shimmer 2s infinite; left:-100%; }
+    @keyframes shimmer { to{left:200%} }
+    .fill-xp     { background:linear-gradient(90deg,#3b82f6,#06b6d4); box-shadow:0 0 12px rgba(59,130,246,.5); }
+    .fill-streak { background:linear-gradient(90deg,#f59e0b,#ef4444); box-shadow:0 0 12px rgba(245,158,11,.5); }
 
-    /* Tick marks on progress */
-    .progress-ticks {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 2px;
-      margin-top: 4px;
+    /* 3D Rank badge */
+    .badge-3d {
+      display:inline-flex; align-items:center; justify-content:center;
+      position:relative; width:80px; height:80px; flex-shrink:0;
+      transform-style:preserve-3d;
+      animation:badge-float 4s ease-in-out infinite;
     }
-    .tick {
-      width: 1px;
-      height: 4px;
-      background: rgba(255,255,255,0.08);
+    @keyframes badge-float { 0%,100%{transform:rotateY(-8deg) rotateX(4deg)} 50%{transform:rotateY(8deg) rotateX(-4deg) translateY(-6px)} }
+    .badge-ring {
+      position:absolute; inset:0; border-radius:50%; border:2px solid transparent; animation:ring-spin 6s linear infinite;
     }
+    .badge-ring.r1 { border-color:transparent var(--gold) transparent var(--gold); filter:drop-shadow(0 0 6px var(--gold)); }
+    .badge-ring.r2 { inset:8px; border-color:transparent var(--accent) transparent var(--accent); animation-duration:4s; animation-direction:reverse; opacity:.5; }
+    @keyframes ring-spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+    .badge-inner-small {
+      width:56px; height:56px; border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.1), rgba(0,0,0,.5));
+      border:1px solid rgba(245,158,11,.4);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      box-shadow:inset 0 2px 8px rgba(255,255,255,.08), 0 0 25px rgba(245,158,11,.2);
+      font-family:'Orbitron',monospace;
+    }
+    .badge-lv { font-size:.55rem; color:var(--muted); color:var(--gold); letter-spacing:.1em; }
+    .badge-num { font-size:1.1rem; font-weight:900; background:linear-gradient(135deg,var(--gold),#fff,var(--gold2,#fbbf24)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
 
-    /* ── RANK LADDER ──────────────────────────────────────────── */
-    .rank-ladder {
-      display: flex;
-      gap: 0.5rem;
-      align-items: flex-end;
-      justify-content: center;
-      padding: 1rem 0;
-    }
-    .ladder-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.4rem;
-      cursor: default;
-      transition: transform 0.2s;
-    }
-    .ladder-item:hover { transform: translateY(-4px); }
-    .ladder-icon-wrap {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      position: relative;
-      transition: all 0.3s;
-      border: 1px solid transparent;
-    }
-    .ladder-item.active .ladder-icon-wrap {
-      box-shadow: 0 0 25px currentColor, 0 4px 15px rgba(0,0,0,0.3);
-      transform: scale(1.15);
-      border-color: currentColor;
-    }
-    .ladder-item.done .ladder-icon-wrap { opacity: 0.5; filter: grayscale(0.3); }
-    .ladder-item.locked .ladder-icon-wrap { opacity: 0.2; filter: grayscale(1); }
-    .ladder-icon-label {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .ladder-item.active .ladder-icon-label { color: var(--gold); font-weight: 700; }
+    /* Main grid */
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+    @media(max-width:750px) { .main-grid { grid-template-columns:1fr; } }
+    .full { grid-column:1/-1; }
 
-    /* Level colors */
-    .rank-1 { background: rgba(107,114,128,0.2); color: #9ca3af; }
-    .rank-2 { background: rgba(34,197,94,0.15); color: #22c55e; }
-    .rank-3 { background: rgba(59,130,246,0.15); color: #3b82f6; }
-    .rank-4 { background: rgba(139,92,246,0.15); color: #8b5cf6; }
-    .rank-5 { background: rgba(245,158,11,0.2); color: var(--gold); }
+    /* Loading state */
+    .loading { text-align:center; padding:3rem; }
+    .spinner {
+      width:48px; height:48px; border:3px solid rgba(59,130,246,.2);
+      border-top-color:var(--accent); border-radius:50%;
+      animation:spin .9s linear infinite; margin:0 auto 1rem;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .loading-text { font-family:'Orbitron',monospace; font-size:.75rem; color:var(--muted); letter-spacing:.2em; }
 
-    /* ── STATS GRID ───────────────────────────────────────────── */
-    .stats-mini {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 0.75rem;
-      padding: 0.9rem 0.75rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    .stat-card:hover {
-      border-color: rgba(59,130,246,0.3);
-      box-shadow: 0 0 20px rgba(59,130,246,0.1);
-    }
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      border-radius: 99px 99px 0 0;
-    }
-    .stat-blue::before  { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
-    .stat-gold::before  { background: linear-gradient(90deg, var(--gold), #fcd34d); }
-    .stat-green::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
-    .stat-purple::before{ background: linear-gradient(90deg, var(--accent2), #ec4899); }
-    .stat-red::before   { background: linear-gradient(90deg, var(--red), var(--gold)); }
+    /* Error */
+    .error-msg { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); border-radius:.75rem; padding:1rem; color:var(--red); font-size:.85rem; text-align:center; }
 
-    .stat-num {
-      font-family: 'Orbitron', monospace;
-      font-size: 1.6rem;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: 0.3rem;
-    }
-    .stat-num.blue   { color: var(--cyan);    text-shadow: 0 0 15px var(--cyan); }
-    .stat-num.gold   { color: var(--gold);    text-shadow: 0 0 15px var(--gold); }
-    .stat-num.green  { color: var(--green);   text-shadow: 0 0 15px var(--green); }
-    .stat-num.purple { color: var(--accent2); text-shadow: 0 0 15px var(--accent2); }
-    .stat-num.red    { color: var(--red);     text-shadow: 0 0 15px var(--red); }
-    .stat-label {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    /* Empty state */
+    .empty { text-align:center; padding:2rem; color:var(--muted); font-family:'Rajdhani',sans-serif; font-size:.9rem; }
 
-    /* ── FLOATING SVGs (decoration) ───────────────────────────── */
-    .floating-svgs {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
+    /* Achievement popup */
+    .ach-pop {
+      position:fixed; bottom:2rem; right:2rem;
+      background:var(--panel); border:1px solid rgba(245,158,11,.5);
+      border-radius:1rem; padding:1rem 1.25rem;
+      display:flex; align-items:center; gap:.75rem; max-width:260px;
+      backdrop-filter:blur(20px); box-shadow:0 0 40px rgba(245,158,11,.2);
+      transform:translateX(130%); transition:transform .5s cubic-bezier(.22,1,.36,1); z-index:200;
     }
-    .float-svg {
-      position: absolute;
-      opacity: 0.04;
-      filter: blur(1px);
-      animation: svg-float linear infinite;
-    }
-    @keyframes svg-float {
-      0%   { transform: translateY(0) rotate(0deg) scale(1); }
-      33%  { transform: translateY(-30px) rotate(15deg) scale(1.05); }
-      66%  { transform: translateY(15px) rotate(-10deg) scale(0.95); }
-      100% { transform: translateY(0) rotate(0deg) scale(1); }
-    }
+    .ach-pop.show { transform:translateX(0); }
+    .ach-emoji { font-size:1.8rem; }
+    .ach-t { font-family:'Orbitron',monospace; font-size:.6rem; color:var(--gold); letter-spacing:.1em; }
+    .ach-n { font-family:'Rajdhani',sans-serif; font-size:.95rem; font-weight:700; margin-top:.1rem; }
 
-    /* ── NEXT RANK PREVIEW ────────────────────────────────────── */
-    .next-rank {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: rgba(245,158,11,0.05);
-      border: 1px solid rgba(245,158,11,0.15);
-      border-radius: 0.875rem;
-      padding: 1rem 1.25rem;
-      margin-top: 1.25rem;
-    }
-    .next-rank-icon { font-size: 2rem; }
-    .next-rank-info { flex: 1; }
-    .next-rank-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.15rem;
-    }
-    .next-rank-name {
-      font-family: 'Orbitron', monospace;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--gold);
-    }
-    .next-rank-xp {
-      font-family: 'Orbitron', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 0.2rem;
-    }
-    .next-rank-bar {
-      width: 120px;
-    }
+    /* Scan line */
+    .scanline { position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px); pointer-events:none; z-index:100; }
 
-    /* ── SCAN LINE EFFECT ─────────────────────────────────────── */
-    .scanline {
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.03) 2px,
-        rgba(0,0,0,0.03) 4px
-      );
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    /* ── Tooltip / hover data ─────────────────────────────────── */
-    .data-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      background: rgba(59,130,246,0.1);
-      border: 1px solid rgba(59,130,246,0.25);
-      border-radius: 99px;
-      padding: 0.2rem 0.6rem;
-      font-family: 'Orbitron', monospace;
-      font-size: 0.65rem;
-      color: var(--accent);
-    }
-
-    /* ── Animated counter ─────────────────────────────────────── */
-    @keyframes count-up {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .count-animate { animation: count-up 0.8s ease forwards; }
-
-    /* ── ACHIEVEMENT POP ──────────────────────────────────────── */
-    .achievement-pop {
-      position: fixed;
-      bottom: 2rem; right: 2rem;
-      background: var(--panel);
-      border: 1px solid rgba(245,158,11,0.4);
-      border-radius: 1rem;
-      padding: 1rem 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      max-width: 280px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 0 40px rgba(245,158,11,0.2), 0 20px 60px rgba(0,0,0,0.5);
-      transform: translateX(120%);
-      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-      z-index: 200;
-    }
-    .achievement-pop.show { transform: translateX(0); }
-    .ach-icon { font-size: 2rem; }
-    .ach-title { font-family: 'Orbitron', monospace; font-size: 0.65rem; color: var(--gold); letter-spacing: 0.1em; }
-    .ach-name  { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; margin-top: 0.1rem; }
-
-    /* ── Scroll behavior ──────────────────────────────────────── */
-    .app { animation: fade-in 0.8s ease; }
-    @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    /* Last updated */
+    .last-updated { text-align:right; font-size:.65rem; color:var(--muted); font-family:'Rajdhani',sans-serif; letter-spacing:.1em; margin-top:.5rem; }
   </style>
 </head>
 <body>
   <div class="scanline"></div>
   <div class="grid-bg"></div>
   <div class="particles" id="particles"></div>
-  <div class="floating-svgs" id="floatingSvgs"></div>
 
-  <!-- ACHIEVEMENT POPUP -->
-  <div class="achievement-pop" id="achievePop">
-    <div class="ach-icon">🏅</div>
+  <div class="ach-pop" id="achPop">
+    <div class="ach-emoji">🏆</div>
     <div>
-      <div class="ach-title">ROZETİN AÇILDI</div>
-      <div class="ach-name" id="achName">Seri Makinesi</div>
+      <div class="ach-t">LİDER TABLOSU</div>
+      <div class="ach-n" id="achText">Veriler yüklendi</div>
     </div>
   </div>
 
   <div class="app">
-    <!-- HEADER -->
     <header class="header">
-      <div class="header-logo">YAP!</div>
-      <div class="header-sub">Rank &amp; İlerleme Merkezi</div>
-      <div class="header-line"></div>
+      <div class="logo">YAP!</div>
+      <div class="logo-sub">Lider Tablosu & Rank Sistemi</div>
+      <div class="divider"></div>
+      <div class="live-badge"><div class="live-dot"></div> Canlı Veri</div>
     </header>
 
-    <div class="main-grid">
-
-      <!-- RANK CARD -->
-      <div class="panel rank-card" id="rankPanel">
-        <div class="panel-title">Mevcut Rank</div>
-
-        <div class="rank-badge-3d">
-          <div class="badge-ring-outer ring1"></div>
-          <div class="badge-ring-outer ring2"></div>
-          <div class="badge-inner">
-            <div class="badge-icon" id="rankIcon">🥊</div>
-            <div class="badge-level" id="badgeLevelNum">8</div>
-            <div class="badge-rank-name" id="badgeRankLabel">ODAKÇI</div>
-          </div>
-          <div class="badge-shadow"></div>
-        </div>
-
-        <div class="rank-title" id="rankTitle">Odakçı</div>
-        <div class="rank-subtitle" id="rankSubtitle">Seviye 8 — XP Sistemi Aktif</div>
-        <div class="rank-xp-display">
-          <span id="xpCount">1750</span>
-          <span style="font-size:0.9rem; color: var(--muted)"> XP</span>
-          <div class="xp-label">TOPLAM DENEYIM</div>
-        </div>
-
-        <!-- Next Rank Preview -->
-        <div class="next-rank">
-          <div class="next-rank-icon" id="nextRankIcon">🧘</div>
-          <div class="next-rank-info">
-            <div class="next-rank-title">Sonraki Rank</div>
-            <div class="next-rank-name" id="nextRankName">Disiplinci</div>
-            <div class="next-rank-xp" id="nextRankXp">450 XP daha</div>
-          </div>
-          <div class="next-rank-bar">
-            <div class="progress-track" style="height:8px;">
-              <div class="progress-fill bar-level" id="xpNextBar" style="width:0%"></div>
-            </div>
-          </div>
-        </div>
+    <div id="root">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Veriler Yükleniyor...</div>
       </div>
-
-      <!-- PROGRESS PANEL -->
-      <div class="panel">
-        <div class="panel-title">İlerleme Durumu</div>
-        <div class="progress-section">
-
-          <div class="progress-item">
-            <div class="progress-header">
-              <span class="progress-label">⭐ Seviye XP</span>
-              <span class="progress-value" style="color:var(--cyan)" id="lvlPct">0%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill bar-level" id="lvlBar" style="width:0%"></div>
-            </div>
-            <div class="progress-ticks">
-              <div class="tick"></div><div class="tick"></div><div class="tick"></div>
-              <div class="tick"></div><div class="tick"></div>
-            </div>
-          </div>
-
-          <div class="progress-item">
-            <div class="progress-header">
-              <span class="progress-label">🔥 Seri</span>
-              <span class="progress-value" style="color:var(--gold)" id="seriPct">0%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill bar-seri" id="seriBar" style="width:0%"></div>
-            </div>
-            <div class="progress-ticks">
-              <div class="tick"></div><div class="tick"></div><div class="tick"></div>
-              <div class="tick"></div><div class="tick"></div>
-            </div>
-          </div>
-
-          <div class="progress-item">
-            <div class="progress-header">
-              <span class="progress-label">✅ Bugünkü Görevler</span>
-              <span class="progress-value" style="color:var(--green)" id="gorevPct">0%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill bar-gorev" id="gorevBar" style="width:0%"></div>
-            </div>
-            <div class="progress-ticks">
-              <div class="tick"></div><div class="tick"></div><div class="tick"></div>
-              <div class="tick"></div><div class="tick"></div>
-            </div>
-          </div>
-
-          <div class="progress-item">
-            <div class="progress-header">
-              <span class="progress-label">🏅 Rozet İlerlemesi</span>
-              <span class="progress-value" style="color:var(--accent2)" id="rozetPct">0%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill bar-rozet" id="rozetBar" style="width:0%"></div>
-            </div>
-            <div class="progress-ticks">
-              <div class="tick"></div><div class="tick"></div><div class="tick"></div>
-              <div class="tick"></div><div class="tick"></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- STATS MINI -->
-      <div class="panel full-width">
-        <div class="panel-title">İstatistikler</div>
-        <div class="stats-mini">
-          <div class="stat-card stat-gold">
-            <div class="stat-num gold" id="statSeri">0</div>
-            <div class="stat-label">🔥 Günlük Seri</div>
-          </div>
-          <div class="stat-card stat-blue">
-            <div class="stat-num blue" id="statXP">0</div>
-            <div class="stat-label">⭐ Toplam XP</div>
-          </div>
-          <div class="stat-card stat-green">
-            <div class="stat-num green" id="statGorev">0</div>
-            <div class="stat-label">✅ Tamamlanan</div>
-          </div>
-          <div class="stat-card stat-purple">
-            <div class="stat-num purple" id="statRozet">0</div>
-            <div class="stat-label">🏅 Rozet</div>
-          </div>
-          <div class="stat-card stat-red">
-            <div class="stat-num red" id="statMukemmel">0</div>
-            <div class="stat-label">🌟 Mükemmel Gün</div>
-          </div>
-          <div class="stat-card stat-blue">
-            <div class="stat-num blue" id="statKombo">0</div>
-            <div class="stat-label">⚡ Kombo</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RANK LADDER -->
-      <div class="panel full-width">
-        <div class="panel-title">Rank Yolu</div>
-        <div class="rank-ladder" id="rankLadder">
-          <!-- generated by JS -->
-        </div>
-      </div>
-
     </div>
   </div>
 
   <script>
-    // ── DEMO DATA (Telegram Bot'undan gerçek data geldiğinde burası güncellenir) ──
-    const PLAYER = {
-      level: 8,
-      totalXp: 1750,
-      streak: 14,
-      tasksToday: 3,
-      tasksTodayTotal: 5,
-      badges: 6,
-      badgesTotal: 20,
-      perfectDays: 7,
-      combo: 3,
-      completedTotal: 142,
-    };
+  // ── Config ──────────────────────────────────────────────────
+  const SUPABASE_URL  = 'https://txkhnectxqpjhfipdydq.supabase.co';
+  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4a2huZWN0eHFwamhmaXBkeWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NTUyOTUsImV4cCI6MjA5MTUzMTI5NX0.d_4W8md2BzpB9ysnpmWUZyT2vkoWXuPft0xeP1Lrl8I';
 
-    const LEVELS = [
-      { level:1,  xp:0,    title:'Yeni Başlayan', icon:'🌱', color:'#9ca3af' },
-      { level:2,  xp:100,  title:'Toparlanan',    icon:'🔰', color:'#22c55e' },
-      { level:3,  xp:250,  title:'Takipte',       icon:'👁️', color:'#06b6d4' },
-      { level:4,  xp:450,  title:'Çabalayan',     icon:'💪', color:'#3b82f6' },
-      { level:5,  xp:700,  title:'Düzenli',       icon:'📋', color:'#3b82f6' },
-      { level:6,  xp:1000, title:'Sağlamcı',      icon:'🛡️', color:'#8b5cf6' },
-      { level:7,  xp:1350, title:'İnatçı',        icon:'⚡', color:'#8b5cf6' },
-      { level:8,  xp:1750, title:'Odakçı',        icon:'🥊', color:'#f59e0b' },
-      { level:9,  xp:2200, title:'Disiplinci',    icon:'🧘', color:'#f59e0b' },
-      { level:10, xp:2700, title:'YAP! Çırağı',   icon:'🎯', color:'#ef4444' },
-      { level:11, xp:3300, title:'Seri Kuran',    icon:'🔥', color:'#ef4444' },
-      { level:12, xp:4000, title:'İradeci',       icon:'⚔️', color:'#f59e0b' },
-      { level:13, xp:4800, title:'Güçlü Rutinci', icon:'🏋️', color:'#f59e0b' },
-      { level:14, xp:5700, title:'Düzen Ustası',  icon:'🌟', color:'#fbbf24' },
-      { level:15, xp:6700, title:'YAP! Ustası',   icon:'👑', color:'#fbbf24' },
-      { level:16, xp:7800, title:'İcra Makinesi', icon:'🤖', color:'#fff' },
-      { level:17, xp:9000, title:'Çelik Rutin',   icon:'💎', color:'#fff' },
-      { level:18, xp:10300,title:'Sistem Adamı',  icon:'🧠', color:'#fff' },
-      { level:19, xp:11700,title:'Bitirici',      icon:'💀', color:'#fff' },
-      { level:20, xp:13200,title:'YAP! Komutanı', icon:'🏆', color:'#fbbf24' },
-    ];
+  const LEVELS = [
+    {l:1,xp:0,t:'Yeni Başlayan',i:'🌱'},{l:2,xp:100,t:'Toparlanan',i:'🔰'},
+    {l:3,xp:250,t:'Takipte',i:'👁️'},{l:4,xp:450,t:'Çabalayan',i:'💪'},
+    {l:5,xp:700,t:'Düzenli',i:'📋'},{l:6,xp:1000,t:'Sağlamcı',i:'🛡️'},
+    {l:7,xp:1350,t:'İnatçı',i:'⚡'},{l:8,xp:1750,t:'Odakçı',i:'🥊'},
+    {l:9,xp:2200,t:'Disiplinci',i:'🧘'},{l:10,xp:2700,t:'YAP! Çırağı',i:'🎯'},
+    {l:11,xp:3300,t:'Seri Kuran',i:'🔥'},{l:12,xp:4000,t:'İradeci',i:'⚔️'},
+    {l:13,xp:4800,t:'Güçlü Rutinci',i:'🏋️'},{l:14,xp:5700,t:'Düzen Ustası',i:'🌟'},
+    {l:15,xp:6700,t:'YAP! Ustası',i:'👑'},{l:16,xp:7800,t:'İcra Makinesi',i:'🤖'},
+    {l:17,xp:9000,t:'Çelik Rutin',i:'💎'},{l:18,xp:10300,t:'Sistem Adamı',i:'🧠'},
+    {l:19,xp:11700,t:'Bitirici',i:'💀'},{l:20,xp:13200,t:'YAP! Komutanı',i:'🏆'},
+  ];
 
-    // ── Particles ──────────────────────────────────────────────
-    function createParticles() {
-      const container = document.getElementById('particles');
-      const colors = ['#3b82f6','#8b5cf6','#06b6d4','#f59e0b','#22c55e'];
-      for (let i = 0; i < 30; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        const size  = Math.random() * 4 + 1;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        p.style.cssText = `
-          width:${size}px; height:${size}px;
-          background:${color};
-          left:${Math.random()*100}%;
-          animation-duration:${8 + Math.random()*15}s;
-          animation-delay:${Math.random()*10}s;
-          box-shadow: 0 0 ${size*3}px ${color};
-          border-radius: 50%;
-        `;
-        container.appendChild(p);
-      }
-    }
+  function getLvl(xp) {
+    let cur = LEVELS[0];
+    for (const l of LEVELS) { if (xp >= l.xp) cur = l; else break; }
+    return cur;
+  }
+  function getNextLvl(xp) {
+    for (const l of LEVELS) { if (l.xp > xp) return l; }
+    return null;
+  }
+  function lvlPct(xp) {
+    const cur = getLvl(xp), nxt = getNextLvl(xp);
+    if (!nxt) return 100;
+    return Math.round(((xp - cur.xp) / (nxt.xp - cur.xp)) * 100);
+  }
+  const STREAK_MILESTONES = [3,7,14,21,30,45,60,90,120,180,365];
+  function seriPct(streak) {
+    const nxt = STREAK_MILESTONES.find(m => m > streak) ?? 365;
+    const prv = [...STREAK_MILESTONES].reverse().find(m => m <= streak) ?? 0;
+    return Math.round(((streak - prv) / (nxt - prv)) * 100);
+  }
+  function numFmt(n) { return Number(n||0).toLocaleString('tr'); }
 
-    // ── Rank Ladder ────────────────────────────────────────────
-    function buildRankLadder() {
-      const container = document.getElementById('rankLadder');
-      const displayed = LEVELS.filter(l => l.level <= PLAYER.level + 3 && l.level >= Math.max(1, PLAYER.level - 4));
+  // Avatar emojis per level
+  function avatarFor(lvl) {
+    const icons = ['🌱','🔰','👁️','💪','📋','🛡️','⚡','🥊','🧘','🎯','🔥','⚔️','🏋️','🌟','👑','🤖','💎','🧠','💀','🏆'];
+    return icons[Math.min(lvl-1, icons.length-1)] ?? '🎮';
+  }
+  function avatarBg(rank) {
+    if (rank===1) return 'rgba(245,158,11,.15)';
+    if (rank===2) return 'rgba(180,180,180,.12)';
+    if (rank===3) return 'rgba(205,124,47,.12)';
+    return 'rgba(59,130,246,.08)';
+  }
+  function avatarBorder(rank) {
+    if (rank===1) return '#f59e0b';
+    if (rank===2) return '#aaa';
+    if (rank===3) return '#cd7c2f';
+    return 'rgba(59,130,246,.3)';
+  }
 
-      displayed.forEach(lvl => {
-        const isActive = lvl.level === PLAYER.level;
-        const isDone   = lvl.level < PLAYER.level;
-        const isLocked = lvl.level > PLAYER.level;
+  // ── Fetch ───────────────────────────────────────────────────
+  async function fetchLeaderboard() {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/leaderboard?select=*&order=rank.asc&limit=50`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
 
-        const item = document.createElement('div');
-        item.className = `ladder-item ${isActive ? 'active' : isDone ? 'done' : 'locked'}`;
-
-        let rankClass = '';
-        if (lvl.level <= 3)       rankClass = 'rank-1';
-        else if (lvl.level <= 6)  rankClass = 'rank-2';
-        else if (lvl.level <= 10) rankClass = 'rank-3';
-        else if (lvl.level <= 15) rankClass = 'rank-4';
-        else                       rankClass = 'rank-5';
-
-        item.innerHTML = `
-          <div class="ladder-icon-wrap ${rankClass}" style="${isActive ? `color:${lvl.color}; border-color:${lvl.color}; box-shadow: 0 0 20px ${lvl.color}66;` : ''}">
-            ${isLocked ? '🔒' : lvl.icon}
-          </div>
-          <div class="ladder-icon-label">${isActive ? '▶ Sv'+lvl.level : 'Sv'+lvl.level}</div>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    // ── Animate Numbers ────────────────────────────────────────
-    function animateNumber(el, target, duration=1500, prefix='', suffix='') {
-      let start = 0;
-      const step = target / (duration / 16);
-      const timer = setInterval(() => {
-        start = Math.min(start + step, target);
-        el.textContent = prefix + Math.round(start).toLocaleString('tr') + suffix;
-        if (start >= target) clearInterval(timer);
+  // ── Render ──────────────────────────────────────────────────
+  function animateNum(el, to, delay=0) {
+    let n = 0;
+    setTimeout(() => {
+      const step = Math.max(1, Math.round(to / 60));
+      const t = setInterval(() => {
+        n = Math.min(n + step, to);
+        el.textContent = numFmt(n);
+        if (n >= to) clearInterval(t);
       }, 16);
+    }, delay);
+  }
+
+  function render(data) {
+    const top3  = data.slice(0, 3);
+    const rest  = data.slice(3);
+    const total = data.length;
+    const top   = data[0];
+
+    const now = new Date().toLocaleString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+
+    // ── Podium HTML ────────────────────────────────────────────
+    const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean); // 2-1-3 order
+    const podiumClass = ['p2 b2','p1 b1','p3 b3'];
+    const podiumRankNum = [2, 1, 3];
+    const podiumCrown  = [false, true, false];
+
+    let podiumHtml = podiumOrder.map((p, idx) => {
+      if (!p) return '';
+      const lvl = getLvl(p.total_xp);
+      const bc  = podiumClass[idx].split(' ');
+      return `
+      <div class="podium-place">
+        <div class="podium-avatar ${bc[0]}" style="border-color:${avatarBorder(podiumRankNum[idx])};color:${avatarBorder(podiumRankNum[idx])};">
+          ${podiumCrown[idx] ? '<div class="crown">👑</div>' : ''}
+          ${avatarFor(p.level||1)}
+        </div>
+        <div class="podium-name">${p.first_name || 'Anonim'}</div>
+        <div class="podium-xp" style="color:${avatarBorder(podiumRankNum[idx])}">${numFmt(p.total_xp)} XP</div>
+        <div class="podium-rank-label">${lvl.t}</div>
+        <div class="podium-block ${bc[1]}">${podiumRankNum[idx] === 1 ? '🥇' : podiumRankNum[idx] === 2 ? '🥈' : '🥉'}</div>
+      </div>`;
+    }).join('');
+
+    // ── Table rows ─────────────────────────────────────────────
+    let tableRows = rest.map((p, idx) => {
+      const rank = idx + 4;
+      const lvl  = getLvl(p.total_xp);
+      const rankCls = rank<=3 ? `r${rank}` : 'rn';
+      const streakCls = (p.current_streak||0) > 0 ? 'hot' : 'cold';
+      return `
+      <tr class="lb-row" style="animation-delay:${idx*0.04}s">
+        <td><div class="rank-num ${rankCls}">${rank}</div></td>
+        <td>
+          <div class="player-info">
+            <div class="player-avatar" style="background:${avatarBg(rank)};border-color:${avatarBorder(rank)}">
+              ${avatarFor(p.level||1)}
+            </div>
+            <div>
+              <div class="player-name">${p.first_name || 'Anonim'}</div>
+              <div class="player-handle">@${p.telegram_username || '—'}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="level-chip">Sv${p.level||1} ${lvl.i}</span></td>
+        <td><span class="xp-val" data-xp="${p.total_xp||0}">0</span></td>
+        <td><span class="streak-val ${streakCls}">${p.current_streak||0} 🔥</span></td>
+        <td style="color:var(--green);font-family:'Orbitron',monospace;font-size:.85rem">${p.completed_tasks||0}</td>
+      </tr>`;
+    }).join('');
+
+    // ── My rank (first entry, treat as "me" for demo) ─────────
+    const me = data[0];
+    let myRankHtml = '';
+    if (me) {
+      const myLvl  = getLvl(me.total_xp);
+      const myNext = getNextLvl(me.total_xp);
+      const myPct  = lvlPct(me.total_xp);
+      const mySPct = seriPct(me.current_streak||0);
+      myRankHtml = `
+      <div class="my-rank-card">
+        <div class="badge-3d">
+          <div class="badge-ring r1"></div>
+          <div class="badge-ring r2"></div>
+          <div class="badge-inner-small">
+            <div class="badge-lv">SV</div>
+            <div class="badge-num">${me.level||1}</div>
+          </div>
+        </div>
+        <div class="my-rank-pos">#${me.rank}</div>
+        <div class="my-rank-info">
+          <div class="my-rank-name">${me.first_name || 'Anonim'}</div>
+          <div class="my-rank-sub">${myLvl.t} · ${numFmt(me.total_xp)} XP</div>
+        </div>
+        <div class="progress-wrap">
+          <div class="prog-label">
+            <span>⭐ Seviye XP</span>
+            <span id="xpPctLbl" style="color:var(--cyan)">${myPct}%</span>
+          </div>
+          <div class="prog-track">
+            <div class="prog-fill fill-xp" id="xpBar" style="width:0%"></div>
+          </div>
+          <div class="prog-label" style="margin-top:.5rem">
+            <span>🔥 Seri</span>
+            <span id="seriPctLbl" style="color:var(--gold)">${mySPct}%</span>
+          </div>
+          <div class="prog-track">
+            <div class="prog-fill fill-streak" id="seriBar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>`;
     }
 
-    // ── Init Data ──────────────────────────────────────────────
-    function init() {
-      const curLevel = LEVELS.find(l => l.level === PLAYER.level);
-      const nxtLevel = LEVELS.find(l => l.level === PLAYER.level + 1);
+    document.getElementById('root').innerHTML = `
+    <div class="main-grid">
 
-      // Badge
-      document.getElementById('rankIcon').textContent = curLevel?.icon ?? '🥊';
-      document.getElementById('badgeLevelNum').textContent = PLAYER.level;
-      document.getElementById('badgeRankLabel').textContent = curLevel?.title?.toUpperCase() ?? 'RANK';
-      document.getElementById('rankTitle').textContent = curLevel?.title ?? 'Rank';
-      document.getElementById('rankSubtitle').textContent = `Seviye ${PLAYER.level} — XP sistemi aktif`;
+      <!-- PODIUM -->
+      <div class="panel full podium-section">
+        <div class="panel-title">🏆 Top 3 Savaşçı</div>
+        <div class="podium">${podiumHtml || '<div class="empty">Yeterli kullanıcı yok henüz</div>'}</div>
+      </div>
 
-      // Next rank
-      if (nxtLevel) {
-        document.getElementById('nextRankIcon').textContent = nxtLevel.icon;
-        document.getElementById('nextRankName').textContent = nxtLevel.title;
-        const needed = nxtLevel.xp - PLAYER.totalXp;
-        document.getElementById('nextRankXp').textContent = `${needed} XP daha`;
-        const pct = ((PLAYER.totalXp - curLevel.xp) / (nxtLevel.xp - curLevel.xp)) * 100;
-        setTimeout(() => {
-          document.getElementById('xpNextBar').style.width = pct + '%';
-        }, 500);
+      <!-- LB TABLE (4+) -->
+      ${rest.length > 0 ? `
+      <div class="panel full">
+        <div class="panel-title">📋 Genel Sıralama</div>
+        <div style="overflow-x:auto">
+          <table class="lb-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Oyuncu</th>
+                <th>Rank</th>
+                <th>XP</th>
+                <th>🔥 Seri</th>
+                <th>✅ Görev</th>
+              </tr>
+            </thead>
+            <tbody id="lbBody">${tableRows}</tbody>
+          </table>
+        </div>
+        <div class="last-updated">Son güncelleme: ${now}</div>
+      </div>` : ''}
+
+    </div>
+    <div style="margin-top:1.5rem" class="panel">
+      <div class="panel-title">👤 Lider Oyuncu</div>
+      ${myRankHtml}
+    </div>
+    <div style="margin-top:.75rem; text-align:center; font-size:.65rem; color:var(--muted); font-family:'Rajdhani',sans-serif; letter-spacing:.1em">
+      ${total} aktif kullanıcı · Veriler Supabase'den canlı çekiliyor
+    </div>`;
+
+    // Animate XP numbers
+    document.querySelectorAll('[data-xp]').forEach((el, i) => {
+      animateNum(el, parseInt(el.dataset.xp)||0, i*50);
+    });
+
+    // Animate bars
+    setTimeout(() => {
+      const xpB = document.getElementById('xpBar');
+      const sB  = document.getElementById('seriBar');
+      if (xpB && me) { xpB.style.width = lvlPct(me.total_xp) + '%'; }
+      if (sB  && me) { sB.style.width  = seriPct(me.current_streak||0) + '%'; }
+    }, 500);
+  }
+
+  // ── Particles ───────────────────────────────────────────────
+  function createParticles() {
+    const c = document.getElementById('particles');
+    const colors = ['#3b82f6','#8b5cf6','#06b6d4','#f59e0b'];
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const sz = Math.random()*3+1, col = colors[Math.floor(Math.random()*colors.length)];
+      p.style.cssText = `width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;animation-duration:${9+Math.random()*14}s;animation-delay:${Math.random()*10}s;box-shadow:0 0 ${sz*3}px ${col}`;
+      c.appendChild(p);
+    }
+  }
+
+  function showAch(text) {
+    const pop = document.getElementById('achPop');
+    document.getElementById('achText').textContent = text;
+    pop.classList.add('show');
+    setTimeout(()=>pop.classList.remove('show'), 4500);
+  }
+
+  // ── Main ────────────────────────────────────────────────────
+  createParticles();
+
+  fetchLeaderboard()
+    .then(data => {
+      if (!data || data.error) throw new Error(data?.message || 'API hatası');
+      render(data);
+      if (data.length > 0) {
+        setTimeout(() => showAch(`${data.length} savaşçı sıralandı! 🔥`), 1500);
       }
+    })
+    .catch(err => {
+      document.getElementById('root').innerHTML = `
+        <div class="error-msg">
+          ⚠️ Veri yüklenemedi: ${err.message}<br>
+          <small style="color:var(--muted);margin-top:.5rem;display:block">Supabase bağlantısı kontrol ediliyor...</small>
+        </div>`;
+      console.error(err);
+    });
 
-      // XP counter
-      setTimeout(() => animateNumber(document.getElementById('xpCount'), PLAYER.totalXp), 300);
-
-      // Progress bars
-      const STREAK_MILESTONES = [3,7,14,21,30,45,60,90,120,180,365];
-      const nextMilestone = STREAK_MILESTONES.find(m => m > PLAYER.streak) ?? 365;
-      const prevMilestone = STREAK_MILESTONES.filter(m => m <= PLAYER.streak).pop() ?? 0;
-      const seriPct = Math.round(((PLAYER.streak - prevMilestone) / (nextMilestone - prevMilestone)) * 100);
-      const lvlPct  = nxtLevel ? Math.round(((PLAYER.totalXp - curLevel.xp)/(nxtLevel.xp - curLevel.xp))*100) : 100;
-      const gorevPct = Math.round((PLAYER.tasksToday / PLAYER.tasksTodayTotal) * 100);
-      const rozetPct = Math.round((PLAYER.badges / PLAYER.badgesTotal) * 100);
-
-      setTimeout(() => {
-        setBar('lvlBar',   'lvlPct',   lvlPct);
-        setBar('seriBar',  'seriPct',  seriPct);
-        setBar('gorevBar', 'gorevPct', gorevPct);
-        setBar('rozetBar', 'rozetPct', rozetPct);
-      }, 400);
-
-      // Stats
-      setTimeout(() => {
-        animateNumber(document.getElementById('statSeri'),    PLAYER.streak);
-        animateNumber(document.getElementById('statXP'),      PLAYER.totalXp);
-        animateNumber(document.getElementById('statGorev'),   PLAYER.completedTotal);
-        animateNumber(document.getElementById('statRozet'),   PLAYER.badges);
-        animateNumber(document.getElementById('statMukemmel'),PLAYER.perfectDays);
-        animateNumber(document.getElementById('statKombo'),   PLAYER.combo);
-      }, 600);
-    }
-
-    function setBar(barId, pctId, pct) {
-      const clamped = Math.min(100, Math.max(0, pct));
-      document.getElementById(barId).style.width = clamped + '%';
-      document.getElementById(pctId).textContent  = clamped + '%';
-    }
-
-    // ── Achievement popup ──────────────────────────────────────
-    function showAchievement(name) {
-      const pop = document.getElementById('achievePop');
-      document.getElementById('achName').textContent = name;
-      pop.classList.add('show');
-      setTimeout(() => pop.classList.remove('show'), 4000);
-    }
-
-    // ── Floating SVGs decoration ───────────────────────────────
-    function createFloatingSvgs() {
-      const svgs = ['🥊','💪','🏋️','🎯','🏆','⚡','🔥','💎','🧠','👑'];
-      const container = document.getElementById('floatingSvgs');
-      svgs.forEach((emoji, i) => {
-        const div = document.createElement('div');
-        div.className = 'float-svg';
-        div.style.cssText = `
-          left: ${10 + (i * 9)}%;
-          top: ${Math.random() * 80}%;
-          font-size: ${40 + Math.random()*40}px;
-          animation-duration: ${6 + Math.random()*8}s;
-          animation-delay: ${Math.random()*5}s;
-        `;
-        div.textContent = emoji;
-        container.appendChild(div);
-      });
-    }
-
-    // ── Run ────────────────────────────────────────────────────
-    createParticles();
-    createFloatingSvgs();
-    buildRankLadder();
-    init();
-
-    // Demo achievement after 3s
-    setTimeout(() => showAchievement('Seri Makinesi 🔥'), 3000);
-    setTimeout(() => showAchievement('14 Günlük Seri! 💎'), 7000);
+  // Auto-refresh every 60s
+  setInterval(() => {
+    fetchLeaderboard().then(data => { if(data && !data.error) render(data); }).catch(()=>{});
+  }, 60000);
   </script>
 </body>
 </html>
