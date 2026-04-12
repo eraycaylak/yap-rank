@@ -79,6 +79,10 @@ html { touch-action: manipulation; -ms-touch-action: manipulation; }
     --divider:   rgba(255,255,255,.06);
     --overlay:   rgba(0,0,0,.65);
 
+    --nav-bg: rgba(15,23,42,.92);
+    --nav-border: rgba(255,255,255,.06);
+    --nav-shadow: rgba(0,0,0,.3);
+
     --shadow:     0 8px 32px rgba(0,0,0,.35);
     --shadow-sm:  0 4px 16px rgba(0,0,0,.25);
     --shadow-lg:  0 12px 48px rgba(0,0,0,.45);
@@ -103,6 +107,10 @@ html.tg-dark {
   --input-focus: rgba(62,207,142,.2);
   --divider:   rgba(255,255,255,.06);
   --overlay:   rgba(0,0,0,.65);
+
+  --nav-bg: rgba(15,23,42,.92);
+  --nav-border: rgba(255,255,255,.06);
+  --nav-shadow: rgba(0,0,0,.3);
 
   --shadow:     0 8px 32px rgba(0,0,0,.35);
   --shadow-sm:  0 4px 16px rgba(0,0,0,.25);
@@ -239,3 +247,60 @@ html, body {
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
 }
+
+/* ══════════════════════════════════════════════════════════
+   DARK MODE — Midnight Blue Override for Headers & Hero
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Media query dark mode ── */
+@media (prefers-color-scheme: dark) {
+  .header-strip {
+    background: linear-gradient(135deg, #0C1B3A 0%, #132952 30%, #1A3566 70%, #0F2440 100%);
+  }
+  .header-strip::before {
+    background: radial-gradient(circle, rgba(91,138,246,.12) 0%, transparent 70%);
+  }
+  .header-strip::after {
+    background: radial-gradient(circle, rgba(91,138,246,.06) 0%, transparent 70%);
+  }
+  .today-hero {
+    background: linear-gradient(145deg, #0C1B3A 0%, #132952 30%, #1A3566 55%, #0F2440 100%);
+    background-size: 200% 200%;
+  }
+  .today-hero::before { background: radial-gradient(circle, rgba(91,138,246,.1) 0%, transparent 70%); }
+  .today-hero::after { background: radial-gradient(circle, rgba(62,207,142,.06) 0%, transparent 70%); }
+
+  .header-compact {
+    background: linear-gradient(135deg, #0C1B3A 0%, #132952 40%, #1A3566 100%);
+  }
+  .header-compact::before {
+    background: radial-gradient(circle, rgba(91,138,246,.1) 0%, transparent 70%);
+  }
+
+  .task-complete-btn.locked { background: rgba(255,255,255,.04); }
+}
+
+/* ── JS-applied tg-dark class ── */
+html.tg-dark .header-strip {
+  background: linear-gradient(135deg, #0C1B3A 0%, #132952 30%, #1A3566 70%, #0F2440 100%);
+}
+html.tg-dark .header-strip::before {
+  background: radial-gradient(circle, rgba(91,138,246,.12) 0%, transparent 70%);
+}
+html.tg-dark .header-strip::after {
+  background: radial-gradient(circle, rgba(91,138,246,.06) 0%, transparent 70%);
+}
+html.tg-dark .today-hero {
+  background: linear-gradient(145deg, #0C1B3A 0%, #132952 30%, #1A3566 55%, #0F2440 100%);
+  background-size: 200% 200%;
+}
+html.tg-dark .today-hero::before { background: radial-gradient(circle, rgba(91,138,246,.1) 0%, transparent 70%); }
+html.tg-dark .today-hero::after { background: radial-gradient(circle, rgba(62,207,142,.06) 0%, transparent 70%); }
+
+html.tg-dark .header-compact {
+  background: linear-gradient(135deg, #0C1B3A 0%, #132952 40%, #1A3566 100%);
+}
+html.tg-dark .header-compact::before {
+  background: radial-gradient(circle, rgba(91,138,246,.1) 0%, transparent 70%);
+}
+html.tg-dark .task-complete-btn.locked { background: rgba(255,255,255,.04); }

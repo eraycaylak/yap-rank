@@ -72,7 +72,7 @@ function setupMainButton(tab) {
     tg.MainButton.show();
     tg.MainButton.onClick(handleMainButtonClick);
   } else if (tab === 'lb') {
-    tg.MainButton.setParams({ text: 'Sıralamayı Paylaş', color: '#3ECF8E', text_color: '#ffffff' });
+    tg.MainButton.setParams({ text: '🏆 Sıralamayı Paylaş', color: '#5B8AF6', text_color: '#ffffff' });
     tg.MainButton.show();
     tg.MainButton.onClick(handleMainButtonClick);
   } else {
@@ -87,8 +87,7 @@ function handleMainButtonClick() {
   if (state.currentTab === 'today') {
     tg.close();
   } else if (state.currentTab === 'lb' && state.me) {
-    tg.switchInlineQuery
-      ? tg.switchInlineQuery(`#${state.me.rank} sıradayım, ${fmt(state.me.total_xp)} XP kazandım! YAP! 🔥`)
-      : tg.showAlert(`#${state.me.rank} sıradayım, ${fmt(state.me.total_xp)} XP kazandım! 🔥`);
+    // Use the proper share function from leaderboard
+    import('./pages/leaderboard.js').then(m => m.shareRanking(state.me));
   }
 }

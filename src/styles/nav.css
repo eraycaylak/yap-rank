@@ -3,11 +3,11 @@
    ══════════════════════════════════════════════════════════ */
 .bottom-nav {
   display: flex;
-  background: rgba(255,255,255,.88);
+  background: var(--nav-bg, rgba(255,255,255,.88));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,.6);
-  box-shadow: 0 -4px 20px rgba(60,80,180,.06);
+  border-top: 1px solid var(--nav-border, rgba(255,255,255,.6));
+  box-shadow: 0 -4px 20px var(--nav-shadow, rgba(60,80,180,.06));
   padding-bottom: env(safe-area-inset-bottom, 0);
   flex-shrink: 0;
   position: relative;
