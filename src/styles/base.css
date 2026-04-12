@@ -84,6 +84,7 @@ html, body {
 .header-strip {
   background: linear-gradient(135deg, #2DD4A0 0%, #3ECF8E 30%, #27A86F 70%, #1E9960 100%);
   padding: 1.2rem 1.25rem 3rem;
+  padding-top: calc(var(--header-offset, 0px) + 1.2rem);
   position: relative; overflow: hidden; flex-shrink: 0;
 }
 /* Floating orb 1 */

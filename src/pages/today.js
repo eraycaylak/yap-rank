@@ -1,11 +1,11 @@
 // ════════════════════════════════════════════════════════════
-// TODAY PAGE — Task list with complete/skip
+// TODAY PAGE — Premium Task Dashboard with Hero Section
 // ════════════════════════════════════════════════════════════
 import { haptic } from '../lib/haptic.js';
 import { sbRpc } from '../lib/supabase.js';
-import { getTgUser, tg } from '../lib/telegram.js';
-import { fmtTime, isTaskAvailable, minutesUntilAvailable, todayFormatted } from '../lib/utils.js';
-import { ICONS } from '../components/svg.js';
+import { getTgUser, getTgPhoto, tg } from '../lib/telegram.js';
+import { fmtTime, isTaskAvailable, minutesUntilAvailable, todayFormatted, getLvl, lvlPct } from '../lib/utils.js';
+import { ICONS, rankBadgeSVG, starsHTML } from '../components/svg.js';
 import { PRIORITY_LABELS, RECURRENCE_LABELS } from '../config.js';
 import { showToast } from '../components/toast.js';
 import { launchConfetti } from '../components/confetti.js';
@@ -22,13 +22,28 @@ export async function loadTodayTasks() {
   } catch { return []; }
 }
 
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 6) return 'İyi geceler';
+  if (h < 12) return 'Günaydın';
+  if (h < 18) return 'İyi günler';
+  return 'İyi akşamlar';
+}
+
 export function renderToday(tasks) {
   const container = document.getElementById('today-content');
   if (!container) return;
 
+  const me = getState().me;
+  const user = getTgUser();
+  const photo = getTgPhoto();
+  const name = user?.first_name || me?.first_name || 'Kullanıcı';
+  const lvl = getLvl(me?.total_xp || 0);
+  const pct = lvlPct(me?.total_xp || 0);
+
   const completed = tasks.filter(t => t.status === 'completed').length;
   const total = tasks.length;
-  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  const progressPct = total > 0 ? Math.round((completed / total) * 100) : 0;
   const allDone = total > 0 && completed === total;
 
   let listHTML = '';
@@ -36,42 +51,86 @@ export function renderToday(tasks) {
   if (tasks.length === 0) {
     listHTML = `
       <div class="task-list-empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--tg-hint)" stroke-width="1.5" width="48" height="48">
-          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--tg-hint)" stroke-width="1.5" width="56" height="56">
+          <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
         </svg>
         <p>Bugün görev yok.<br/>Hemen bir görev ekle!</p>
       </div>
     `;
   } else if (allDone) {
     listHTML = `
-      <div class="today-all-done animate-pop">
-        <div style="font-size:3rem;margin-bottom:.5rem">
-          <svg viewBox="0 0 24 24" fill="var(--green)" width="64" height="64"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      <div class="today-all-done">
+        <div class="today-all-done-icon">
+          <svg viewBox="0 0 48 48" width="80" height="80">
+            <circle cx="24" cy="24" r="22" fill="none" stroke="var(--green)" stroke-width="3" opacity=".2"/>
+            <circle cx="24" cy="24" r="22" fill="none" stroke="var(--green)" stroke-width="3" 
+                    stroke-dasharray="138" stroke-dashoffset="0" stroke-linecap="round"
+                    style="animation: circle-fill 1s ease-out both"/>
+            <path d="M15 24l6 6 12-12" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                  style="animation: check-draw .5s .5s ease both; stroke-dasharray: 30; stroke-dashoffset: 30"/>
+          </svg>
         </div>
         <div class="today-all-done-title">Bugün her şeyi bitirdin!</div>
-        <div class="today-all-done-sub">Harika iş çıkardın, dinlenmeyi hak ettin</div>
+        <div class="today-all-done-sub">Harika iş çıkardın, dinlenmeyi hak ettin 🎉</div>
       </div>
     `;
   } else {
     listHTML = '<div class="task-list">' + tasks.map((t, i) => renderTaskItem(t, i)).join('') + '</div>';
   }
 
+  // Build photo HTML
+  const photoHTML = photo
+    ? `<img src="${photo}" class="hero-avatar" alt="${name}"/>`
+    : `<div class="hero-avatar hero-avatar-fallback">${name.charAt(0).toUpperCase()}</div>`;
+
   container.innerHTML = `
-    <div class="today-header">
-      <div style="position:relative;z-index:1">
-        <div class="today-date">${todayFormatted()}</div>
-        <div class="today-title">Bugünkü Görevlerin</div>
-        <div class="today-progress-wrap">
-          <div class="today-progress-label">
-            <span>${completed}/${total} tamamlandı</span>
-            <span>${pct}%</span>
+    <div class="today-hero">
+      <div class="today-hero-content">
+        <div class="hero-top">
+          ${photoHTML}
+          <div class="hero-info">
+            <div class="hero-greeting">${getGreeting()},</div>
+            <div class="hero-name">${name}</div>
+          </div>
+          <div class="hero-level-badge">
+            ${rankBadgeSVG(me?.level || 1, 44)}
+            <span class="hero-level-num">Lv.${me?.level || 1}</span>
+          </div>
+        </div>
+
+        <div class="hero-stats-row">
+          <div class="hero-stat">
+            ${ICONS.fire}
+            <span class="hero-stat-val">${me?.current_streak || 0}</span>
+            <span class="hero-stat-label">gün seri</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            ${ICONS.star}
+            <span class="hero-stat-val">${me?.total_xp || 0}</span>
+            <span class="hero-stat-label">XP</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            ${ICONS.chart}
+            <span class="hero-stat-val">#${me?.rank || '–'}</span>
+            <span class="hero-stat-label">sıralama</span>
+          </div>
+        </div>
+
+        <div class="hero-progress">
+          <div class="hero-progress-info">
+            <span>${todayFormatted()}</span>
+            <span class="hero-progress-pct">${completed}/${total} · %${progressPct}</span>
           </div>
           <div class="today-progress-track">
-            <div class="today-progress-fill" style="width:${pct}%"></div>
+            <div class="today-progress-fill" style="width:${progressPct}%"></div>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="section-title">Bugünkü Görevler</div>
     ${listHTML}
   `;
 
