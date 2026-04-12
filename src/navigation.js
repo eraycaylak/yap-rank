@@ -55,6 +55,7 @@ export function switchTab(tab) {
   setFabVisible(tab === 'today');
 
   // Lazy-load page content
+  if (tab === 'today') renderToday(state.me);  // always re-fetch tasks
   if (tab === 'profile' && state.me) renderProfile(state.me);
   if (tab === 'lb') renderLeaderboard(state.lb, state.me);
   if (tab === 'badges' && state.me) renderBadges(state.me);
