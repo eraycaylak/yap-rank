@@ -49,17 +49,21 @@ export async function renderSettings() {
   const summaryHour = settings?.daily_summary_hour ?? 22;
 
   const toneButtons = Object.entries(TONE_LABELS).map(([key, label]) =>
-    `<button class="tone-seg ${tone === key ? 'active' : ''}" data-tone="${key}">${label}</button>`
+    `<button class="tone-pill ${tone === key ? 'selected' : ''}" data-tone="${key}">${label}</button>`
   ).join('');
 
   const taskListHTML = tasks.length > 0
-    ? tasks.map(t => `
-      <div class="task-manage-item" data-task-id="${t.id}">
-        <div class="task-manage-info">
-          <div class="task-manage-title">${t.title}</div>
-          <div class="task-manage-meta">${fmtTime(t.scheduled_time)} · ${PRIORITY_LABELS[t.priority || 2]} · ${RECURRENCE_LABELS[t.recurrence_type] || ''}</div>
+    ? tasks.map((t, i) => `
+      <div class="managed-task animate-in" style="animation-delay:${i * .03}s" data-task-id="${t.id}">
+        <div class="mt-info">
+          <div class="mt-title">${t.title}</div>
+          <div class="mt-time">${fmtTime(t.scheduled_time)} · ${PRIORITY_LABELS[t.priority || 2]} · ${RECURRENCE_LABELS[t.recurrence_type] || ''}</div>
         </div>
-        <button class="task-manage-delete" data-delete-id="${t.id}" aria-label="Sil">${ICONS.trash}</button>
+        <button class="mt-delete" data-delete-id="${t.id}" aria-label="Sil">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+          </svg>
+        </button>
       </div>
     `).join('')
     : '<p style="color:var(--tg-hint);font-size:.8rem;font-weight:600;padding:.5rem 0">Henüz görev yok</p>';
@@ -72,60 +76,71 @@ export async function renderSettings() {
       </div>
     </div>
 
-    <div class="settings-section">
-      <div class="settings-section-title">Bildirim Tonu</div>
-      <div class="tone-segments" id="tone-selector">${toneButtons}</div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">Bildirimler</div>
-
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Bildirimler</div>
-          <div class="setting-sub">Görev hatırlatmaları</div>
+    <div class="settings-content">
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--tg-hint)" stroke-width="2" width="13" height="13"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>
+          Bildirim Tonu
         </div>
-        <label class="toggle">
-          <input type="checkbox" id="set-notif" ${notifOn ? 'checked' : ''}/>
-          <div class="toggle-track"></div>
-          <div class="toggle-thumb"></div>
-        </label>
+        <div class="tone-row" id="tone-selector">${toneButtons}</div>
       </div>
 
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Sabah Mesajı</div>
-          <div class="setting-sub">Günaydın + görev özeti</div>
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--tg-hint)" stroke-width="2" width="13" height="13"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          Bildirimler
         </div>
-        <div style="display:flex;align-items:center;gap:.5rem">
-          <label class="toggle">
-            <input type="checkbox" id="set-morning" ${morningOn ? 'checked' : ''}/>
-            <div class="toggle-track"></div>
-            <div class="toggle-thumb"></div>
-          </label>
-          <input type="time" class="time-input" id="set-morning-hour" value="${String(morningHour).padStart(2, '0')}:00"/>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Hatırlatmalar</div>
+            <div class="setting-hint">Görev hatırlatma mesajları</div>
+          </div>
+          <div class="toggle ${notifOn ? 'on' : ''}" id="set-notif" data-key="notif">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Sabah Mesajı</div>
+            <div class="setting-hint">Günaydın + görev özeti</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <div class="toggle ${morningOn ? 'on' : ''}" id="set-morning" data-key="morning">
+              <div class="toggle-knob"></div>
+            </div>
+            <select class="setting-select" id="set-morning-hour">
+              ${[6,7,8,9,10,11].map(h => `<option value="${h}" ${morningHour === h ? 'selected' : ''}>${String(h).padStart(2,'0')}:00</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Günlük Özet</div>
+            <div class="setting-hint">Gün sonu değerlendirme</div>
+          </div>
+          <select class="setting-select" id="set-summary-hour">
+            ${[20,21,22,23].map(h => `<option value="${h}" ${summaryHour === h ? 'selected' : ''}>${String(h).padStart(2,'0')}:00</option>`).join('')}
+          </select>
         </div>
       </div>
 
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Günlük Özet Saati</div>
-          <div class="setting-sub">Gün sonu değerlendirme</div>
-        </div>
-        <input type="time" class="time-input" id="set-summary-hour" value="${String(summaryHour).padStart(2, '0')}:00"/>
+      <div style="padding:0 1rem">
+        <button class="modal-submit" id="settings-save-btn">Kaydet</button>
       </div>
-    </div>
 
-    <div style="padding:0 1rem">
-      <button class="settings-save-btn" id="settings-save-btn">Kaydet</button>
-    </div>
+      <div class="settings-section" style="margin-top:.75rem">
+        <div class="settings-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--tg-hint)" stroke-width="2" width="13" height="13"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Görevlerim (${tasks.length})
+        </div>
+        ${taskListHTML}
+      </div>
 
-    <div class="settings-section" style="margin-top:1rem">
-      <div class="settings-section-title">Görevlerim (${tasks.length})</div>
-      ${taskListHTML}
+      <div style="height:1.5rem"></div>
     </div>
-
-    <div style="height:1.5rem"></div>
   `;
 
   bindSettingsEvents();
@@ -133,17 +148,20 @@ export async function renderSettings() {
 
 function bindSettingsEvents() {
   // Tone selector
-  document.querySelectorAll('#tone-selector .tone-seg').forEach(btn => {
+  document.querySelectorAll('#tone-selector .tone-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       haptic.select();
-      document.querySelectorAll('#tone-selector .tone-seg').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('#tone-selector .tone-pill').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
     });
   });
 
-  // Toggle haptic
-  document.querySelectorAll('.toggle input').forEach(input => {
-    input.addEventListener('change', () => haptic.select());
+  // Toggle switches (click-based, no input)
+  document.querySelectorAll('.toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      haptic.select();
+      toggle.classList.toggle('on');
+    });
   });
 
   // Save button
@@ -165,11 +183,11 @@ async function saveSettings() {
   const user = getTgUser();
   if (!user) return;
 
-  const tone = document.querySelector('#tone-selector .tone-seg.active')?.dataset.tone || 'balanced';
-  const notifOn = document.getElementById('set-notif')?.checked ?? true;
-  const morningOn = document.getElementById('set-morning')?.checked ?? true;
-  const morningHour = parseInt(document.getElementById('set-morning-hour')?.value?.split(':')[0]) || 8;
-  const summaryHour = parseInt(document.getElementById('set-summary-hour')?.value?.split(':')[0]) || 22;
+  const tone = document.querySelector('#tone-selector .tone-pill.selected')?.dataset.tone || 'balanced';
+  const notifOn = document.getElementById('set-notif')?.classList.contains('on') ?? true;
+  const morningOn = document.getElementById('set-morning')?.classList.contains('on') ?? true;
+  const morningHour = parseInt(document.getElementById('set-morning-hour')?.value) || 8;
+  const summaryHour = parseInt(document.getElementById('set-summary-hour')?.value) || 22;
 
   haptic.heavy();
   const btn = document.getElementById('settings-save-btn');
@@ -186,7 +204,7 @@ async function saveSettings() {
       p_summary_hour: summaryHour,
     });
     haptic.success();
-    showToast('Ayarlar kaydedildi', 'success');
+    showToast('Ayarlar kaydedildi ✅', 'success');
   } catch {
     haptic.error();
     showToast('Kayıt hatası', 'error');

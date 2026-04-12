@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════
-// ADD TASK MODAL — Form to create new tasks
+// ADD TASK MODAL — Bottom sheet form
 // ════════════════════════════════════════════════════════════
 import { haptic } from '../lib/haptic.js';
 import { sbRpc } from '../lib/supabase.js';
@@ -30,42 +30,42 @@ export function showAddTaskModal(onSave) {
 
       <div class="form-group">
         <label class="form-label">Zorluk</label>
-        <div class="priority-group">
-          <button class="priority-btn" data-p="1">Kolay</button>
-          <button class="priority-btn selected" data-p="2">Orta</button>
-          <button class="priority-btn" data-p="3">Zor</button>
-          <button class="priority-btn" data-p="4">Çok Zor</button>
+        <div class="pill-group">
+          <button class="pill-btn" data-p="1">Kolay</button>
+          <button class="pill-btn selected" data-p="2">Orta</button>
+          <button class="pill-btn" data-p="3">Zor</button>
+          <button class="pill-btn" data-p="4">Çok Zor</button>
         </div>
       </div>
 
       <div class="form-group">
         <label class="form-label">Tekrar</label>
-        <div class="recurrence-group">
-          <button class="recurrence-btn selected" data-r="daily">Günlük</button>
-          <button class="recurrence-btn" data-r="weekly">Haftalık</button>
-          <button class="recurrence-btn" data-r="once">Tek Seferlik</button>
+        <div class="pill-group">
+          <button class="pill-btn selected" data-r="daily">Günlük</button>
+          <button class="pill-btn" data-r="weekly">Haftalık</button>
+          <button class="pill-btn" data-r="once">Tek Sefer</button>
         </div>
       </div>
 
-      <button class="form-submit" id="task-save-btn">Kaydet</button>
+      <button class="modal-submit" id="task-save-btn">Kaydet</button>
     </div>
   `;
 
   // Bind events
   // Priority selector
-  modal.querySelectorAll('.priority-btn').forEach(btn => {
+  modal.querySelectorAll('[data-p]').forEach(btn => {
     btn.addEventListener('click', () => {
       haptic.select();
-      modal.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+      modal.querySelectorAll('[data-p]').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
     });
   });
 
   // Recurrence selector
-  modal.querySelectorAll('.recurrence-btn').forEach(btn => {
+  modal.querySelectorAll('[data-r]').forEach(btn => {
     btn.addEventListener('click', () => {
       haptic.select();
-      modal.querySelectorAll('.recurrence-btn').forEach(b => b.classList.remove('selected'));
+      modal.querySelectorAll('[data-r]').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
     });
   });
@@ -91,8 +91,8 @@ function closeModal() {
 async function saveTask() {
   const title = document.getElementById('task-title-input')?.value?.trim();
   const time = document.getElementById('task-time-input')?.value;
-  const priority = document.querySelector('.priority-btn.selected')?.dataset.p || '2';
-  const recurrence = document.querySelector('.recurrence-btn.selected')?.dataset.r || 'daily';
+  const priority = document.querySelector('[data-p].selected')?.dataset.p || '2';
+  const recurrence = document.querySelector('[data-r].selected')?.dataset.r || 'daily';
 
   if (!title) {
     haptic.error();
@@ -130,7 +130,7 @@ async function saveTask() {
     }
 
     haptic.success();
-    showToast('Görev eklendi!', 'success');
+    showToast('Görev eklendi! 🎯', 'success');
     closeModal();
     if (onSaveCallback) onSaveCallback();
   } catch {
