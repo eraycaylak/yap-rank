@@ -1,0 +1,35 @@
+/* ══════════════════════════════════════════════════════════
+   BADGES — Collectible Card Style with Shine Effect
+   ══════════════════════════════════════════════════════════ */
+.badges-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem; padding: .75rem 1rem 1rem; }
+.badge-card {
+  background: var(--white);
+  border-radius: 1.1rem; padding: 1rem .6rem .8rem;
+  box-shadow: 0 4px 18px rgba(60,80,180,.08);
+  text-align: center; position: relative;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.badge-card:active { transform: scale(.92) rotate(-2deg); box-shadow: 0 2px 8px rgba(60,80,180,.1); }
+.badge-card.locked {
+  opacity: .35; filter: grayscale(.9);
+}
+/* Shine sweep on earned badges */
+.badge-card:not(.locked)::after {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.5) 50%, transparent 100%);
+  animation: badge-shine 4s ease-in-out infinite;
+  animation-delay: var(--shine-delay, 0s);
+}
+.badge-img {
+  width: 56px; height: 56px; margin: 0 auto .5rem;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,.12));
+  transition: transform .3s;
+}
+.badge-card:not(.locked):active .badge-img { transform: scale(1.15) rotate(5deg); }
+.badge-name { font-size: .68rem; font-weight: 900; line-height: 1.25; }
+.badge-earned { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
+.badge-earned svg { width: 18px; height: 18px; filter: drop-shadow(0 1px 3px rgba(62,207,142,.5)); }

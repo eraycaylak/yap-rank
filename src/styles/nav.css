@@ -1,0 +1,44 @@
+/* ══════════════════════════════════════════════════════════
+   BOTTOM NAVIGATION — Premium Glass Nav
+   ══════════════════════════════════════════════════════════ */
+.bottom-nav {
+  display: flex;
+  background: rgba(255,255,255,.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,.6);
+  box-shadow: 0 -4px 20px rgba(60,80,180,.06);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+}
+.bottom-nav.hidden { display: none; }
+
+.nav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: .6rem .1rem .5rem;
+  gap: .15rem;
+  font-size: .52rem; font-weight: 800; color: var(--tg-hint);
+  text-transform: uppercase; letter-spacing: .06em;
+  transition: all .25s;
+  position: relative;
+  -webkit-appearance: none;
+}
+.nav-tab.active { color: var(--green); }
+
+/* Active indicator — glowing dot */
+.nav-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 3px;
+  background: linear-gradient(90deg, var(--green), #27E8A0);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 8px var(--green-glow);
+}
+.nav-tab svg {
+  width: 21px; height: 21px;
+  transition: transform .25s;
+}
+.nav-tab.active svg { transform: scale(1.15) translateY(-1px); }

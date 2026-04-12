@@ -1,0 +1,182 @@
+/* ══════════════════════════════════════════════════════════
+   TODAY TAB — Premium Task Dashboard
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Header with animated gradient ─────────────────────── */
+.today-header {
+  background: linear-gradient(135deg, #2DD4A0 0%, #3ECF8E 25%, #27A86F 60%, #1E9960 100%);
+  background-size: 200% 200%;
+  animation: gradient-flow 8s ease infinite;
+  padding: 1.2rem 1.25rem 1.6rem;
+  position: relative; overflow: hidden;
+}
+.today-header::before {
+  content: '';
+  position: absolute; top: -35px; right: -25px;
+  width: 130px; height: 130px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+  animation: float-orb 6s ease-in-out infinite;
+}
+.today-header::after {
+  content: '';
+  position: absolute; bottom: -20px; left: 15%;
+  width: 90px; height: 90px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.08) 0%, transparent 70%);
+  animation: float-orb 9s ease-in-out infinite reverse;
+}
+.today-date {
+  font-size: .62rem; font-weight: 800;
+  color: rgba(255,255,255,.7); letter-spacing: .2em; text-transform: uppercase;
+}
+.today-title {
+  font-size: 1.35rem; font-weight: 900; color: #fff; margin-top: .15rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+.today-progress-wrap { margin-top: .85rem; position: relative; z-index: 1; }
+.today-progress-label {
+  display: flex; justify-content: space-between;
+  font-size: .7rem; color: rgba(255,255,255,.9); font-weight: 800; margin-bottom: .35rem;
+}
+.today-progress-track { height: 8px; background: rgba(255,255,255,.18); border-radius: 99px; overflow: hidden; }
+.today-progress-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.85) 100%);
+  box-shadow: 0 0 12px rgba(255,255,255,.5);
+  transition: width 1s cubic-bezier(.22,1,.36,1);
+  position: relative;
+}
+
+/* ── Task list ─────────────────────────────────────────── */
+.task-list { padding: .3rem 0 1rem; }
+
+.task-list-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem 1.5rem; gap: 1rem; text-align: center;
+}
+.task-list-empty svg { opacity: .2; }
+.task-list-empty p { color: var(--tg-hint); font-weight: 700; font-size: .88rem; line-height: 1.6; }
+
+/* ── Task item — Premium card style ────────────────────── */
+.task-item {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .85rem 1rem .85rem .75rem;
+  margin: .3rem .75rem;
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 2px 12px rgba(60,80,180,.06);
+  position: relative;
+  overflow: hidden;
+  transition: transform .15s, box-shadow .15s;
+  user-select: none;
+  border-left: 4px solid transparent;
+}
+.task-item:active { transform: scale(.98); box-shadow: 0 1px 6px rgba(60,80,180,.08); }
+.task-item.p1-border { border-left-color: var(--green); }
+.task-item.p2-border { border-left-color: var(--blue); }
+.task-item.p3-border { border-left-color: var(--orange); }
+.task-item.p4-border { border-left-color: var(--red); }
+.task-item.completed {
+  opacity: .5;
+  background: rgba(255,255,255,.6);
+}
+.task-item.completed .task-title { text-decoration: line-through; text-decoration-color: var(--tg-hint); }
+.task-item.skipped { opacity: .35; }
+
+.task-time {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; font-size: .72rem;
+  color: var(--tg-hint);
+  min-width: 38px; text-align: center;
+  background: rgba(0,0,0,.03);
+  padding: .25rem .35rem;
+  border-radius: 6px;
+}
+
+.task-info { flex: 1; min-width: 0; }
+.task-title {
+  font-weight: 800; font-size: .88rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.task-meta { display: flex; align-items: center; gap: .4rem; margin-top: .25rem; }
+
+.task-priority {
+  font-size: .55rem; font-weight: 900; border-radius: 99px;
+  padding: .15rem .5rem; text-transform: uppercase; letter-spacing: .07em;
+}
+.task-priority.p1 { background: rgba(62,207,142,.12); color: var(--green2); }
+.task-priority.p2 { background: rgba(91,138,246,.12); color: #3b6ef0; }
+.task-priority.p3 { background: rgba(255,180,58,.12); color: #c87000; }
+.task-priority.p4 { background: rgba(249,96,96,.12); color: #c53030; }
+
+.task-recurrence { font-size: .6rem; color: var(--tg-hint); font-weight: 600; }
+
+/* ── Complete button ────────────────────────────────────── */
+.task-complete-btn {
+  width: 42px; height: 42px; border-radius: 13px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  position: relative;
+}
+.task-complete-btn.available {
+  background: linear-gradient(135deg, var(--green), #27C27C);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--green-glow);
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+.task-complete-btn.available:active {
+  transform: scale(.85);
+  box-shadow: 0 2px 8px var(--green-glow);
+}
+.task-complete-btn.locked {
+  background: rgba(0,0,0,.04); color: var(--tg-hint);
+}
+.task-complete-btn.done {
+  background: rgba(62,207,142,.1); color: var(--green);
+}
+.task-complete-btn svg { width: 20px; height: 20px; }
+
+.task-lock-hint {
+  font-size: .55rem; color: var(--tg-hint); font-weight: 700;
+  text-align: right; min-width: 50px;
+  background: rgba(0,0,0,.03);
+  padding: .2rem .4rem;
+  border-radius: 6px;
+}
+
+/* ── All done celebration ──────────────────────────────── */
+.today-all-done {
+  text-align: center; padding: 3rem 1.5rem;
+  animation: scale-in .5s cubic-bezier(.22,1,.36,1) both;
+}
+.today-all-done-icon {
+  margin-bottom: .75rem;
+  animation: float-subtle 3s ease-in-out infinite;
+}
+.today-all-done-title {
+  font-size: 1.15rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--green2), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.today-all-done-sub { font-size: .82rem; color: var(--tg-hint); font-weight: 600; margin-top: .3rem; }
+
+/* ── FAB — Floating Action Button with glow ────────────── */
+.fab {
+  position: fixed;
+  bottom: calc(60px + env(safe-area-inset-bottom, 0) + 18px);
+  right: 18px;
+  width: 54px; height: 54px; border-radius: 17px;
+  background: linear-gradient(135deg, var(--green), #27C27C);
+  color: #fff;
+  box-shadow: 0 8px 28px var(--green-glow), inset 0 1px 0 rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 90;
+  transition: transform .2s, box-shadow .2s;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+.fab:active {
+  transform: scale(.88) rotate(-10deg);
+  box-shadow: 0 4px 14px var(--green-glow);
+}
+.fab svg { width: 26px; height: 26px; }

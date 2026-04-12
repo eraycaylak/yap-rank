@@ -1,0 +1,173 @@
+/* ══════════════════════════════════════════════════════════
+   YAP! RANK — PREMIUM DESIGN SYSTEM
+   ══════════════════════════════════════════════════════════ */
+
+/* ── CSS Reset ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+img, svg { display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, select, textarea { font-family: inherit; }
+
+/* ── Theme Variables ────────────────────────────────────── */
+:root {
+  --tg-bg:          var(--tg-theme-bg-color, #F0F4FF);
+  --tg-text:        var(--tg-theme-text-color, #1A1F36);
+  --tg-hint:        var(--tg-theme-hint-color, #8492B4);
+  --tg-link:        var(--tg-theme-link-color, #3ECF8E);
+  --tg-btn:         var(--tg-theme-button-color, #3ECF8E);
+  --tg-btn-text:    var(--tg-theme-button-text-color, #ffffff);
+  --tg-secondary:   var(--tg-theme-secondary-bg-color, #EEF2FF);
+
+  /* ── Brand Colors ── */
+  --green:     #3ECF8E;
+  --green2:    #27A86F;
+  --green-glow: rgba(62,207,142,.45);
+  --blue:      #5B8AF6;
+  --red:       #F96060;
+  --purple:    #9B6BF9;
+  --orange:    #FFB43A;
+  --gold:      #F9B43A;
+  --white:     #FFFFFF;
+  --dark:      #1A1F36;
+
+  /* ── Shadows ── */
+  --shadow:     0 8px 32px rgba(60,80,180,.12);
+  --shadow-sm:  0 4px 16px rgba(60,80,180,.08);
+  --shadow-lg:  0 12px 48px rgba(60,80,180,.18);
+  --shadow-green: 0 8px 32px rgba(62,207,142,.3);
+  --glass-bg:   rgba(255,255,255,.72);
+  --glass-border: rgba(255,255,255,.5);
+  --glass-blur: blur(20px);
+
+  /* ── Spacing ── */
+  --pad: 1rem;
+  --radius: 1.25rem;
+  --radius-sm: .85rem;
+  --radius-xs: .5rem;
+}
+
+html, body {
+  height: 100%;
+  background: var(--tg-bg);
+  color: var(--tg-text);
+  font-family: 'Nunito', sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── App Shell ──────────────────────────────────────────── */
+#app {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Pages ──────────────────────────────────────────────── */
+.page {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+.page.active { display: block; }
+.page-content { padding-bottom: env(safe-area-inset-bottom, 0); }
+
+/* ══════════════════════════════════════════════════════════
+   HEADER — Cinematic Gradient with Floating Orbs
+   ══════════════════════════════════════════════════════════ */
+.header-strip {
+  background: linear-gradient(135deg, #2DD4A0 0%, #3ECF8E 30%, #27A86F 70%, #1E9960 100%);
+  padding: 1.2rem 1.25rem 3rem;
+  position: relative; overflow: hidden; flex-shrink: 0;
+}
+/* Floating orb 1 */
+.header-strip::before {
+  content: '';
+  position: absolute; top: -40px; right: -20px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.18) 0%, transparent 70%);
+  animation: float-orb 6s ease-in-out infinite;
+}
+/* Floating orb 2 */
+.header-strip::after {
+  content: '';
+  position: absolute; bottom: -30px; left: 30%;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 70%);
+  animation: float-orb 8s ease-in-out infinite reverse;
+}
+.header-label { font-size: .6rem; font-weight: 800; color: rgba(255,255,255,.7); letter-spacing: .25em; text-transform: uppercase; }
+.header-name  { font-size: 1.5rem; font-weight: 900; color: #fff; margin-top: .15rem; text-shadow: 0 2px 8px rgba(0,0,0,.12); }
+
+/* ── Section Title ──────────────────────────────────────── */
+.section-title {
+  font-size: .8rem; font-weight: 800; padding: 1.2rem var(--pad) .6rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.section-title::before {
+  content: '';
+  width: 3px; height: 14px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--green), var(--green2));
+}
+
+/* ── Empty / Loading ────────────────────────────────────── */
+.center-msg { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3.5rem 1rem; gap: 1rem; }
+.center-msg svg { width: 52px; height: 52px; opacity: .25; }
+.center-msg p { font-size: .85rem; color: var(--tg-hint); font-weight: 600; text-align: center; line-height: 1.5; }
+.spinner {
+  width: 40px; height: 40px;
+  border: 3.5px solid rgba(62,207,142,.15);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin .75s linear infinite;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PREMIUM ANIMATIONS
+   ══════════════════════════════════════════════════════════ */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float-orb { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-15px) scale(1.05)} }
+@keyframes slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes slide-down { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scale-in { from { opacity: 0; transform: scale(.82); } to { opacity: 1; transform: none; } }
+@keyframes pop { 0%{transform:scale(0)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)} 40%{transform:translateX(4px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+@keyframes glow-pulse { 0%,100%{box-shadow:0 0 12px rgba(62,207,142,.3)} 50%{box-shadow:0 0 24px rgba(62,207,142,.6)} }
+@keyframes shimmer {
+  0% { left: -120%; }
+  100% { left: 220%; }
+}
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes badge-shine {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
+@keyframes float-subtle {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes count-pop { 0%{transform:scale(1)} 50%{transform:scale(1.25)} 100%{transform:scale(1)} }
+
+.animate-in { animation: slide-up .45s cubic-bezier(.22,1,.36,1) both; }
+.animate-pop { animation: pop .4s cubic-bezier(.22,1,.36,1) both; }
+.animate-fade { animation: fade-in .35s both; }
+.animate-scale { animation: scale-in .4s cubic-bezier(.22,1,.36,1) both; }
+
+/* ── Glassmorphism Utility ──────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}

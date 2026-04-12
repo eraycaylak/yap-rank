@@ -1,0 +1,108 @@
+/* ══════════════════════════════════════════════════════════
+   SETTINGS — Premium Configuration Panel
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Setting sections ──────────────────────────────────── */
+.settings-content { padding: .5rem 0 2rem; }
+.settings-section {
+  margin: .5rem 1rem; padding: .9rem;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 16px rgba(60,80,180,.06);
+}
+.settings-section-title {
+  font-size: .65rem; font-weight: 900;
+  text-transform: uppercase; letter-spacing: .18em;
+  color: var(--tg-hint); margin-bottom: .75rem;
+  display: flex; align-items: center; gap: .4rem;
+}
+.settings-section-title svg { width: 13px; height: 13px; }
+
+/* ── Setting row ───────────────────────────────────────── */
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .75rem 0;
+  border-bottom: 1px solid rgba(0,0,0,.03);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-weight: 800; font-size: .85rem; flex: 1; }
+.setting-hint { font-size: .68rem; color: var(--tg-hint); font-weight: 600; margin-top: .2rem; }
+
+/* ── Toggle switch — Premium ───────────────────────────── */
+.toggle {
+  width: 48px; height: 28px;
+  background: rgba(0,0,0,.08);
+  border-radius: 50px; position: relative;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .3s;
+}
+.toggle.on {
+  background: linear-gradient(135deg, var(--green), #27C27C);
+  box-shadow: 0 2px 10px var(--green-glow);
+}
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px; background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  transition: all .3s cubic-bezier(.22,1,.36,1);
+}
+.toggle.on .toggle-knob { transform: translateX(20px); }
+
+/* ── Select dropdown ───────────────────────────────────── */
+.setting-select {
+  padding: .45rem .75rem;
+  border: 1.5px solid rgba(0,0,0,.06);
+  border-radius: .7rem;
+  background: rgba(0,0,0,.02);
+  font-weight: 800; font-size: .8rem;
+  color: var(--tg-text);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238492B4' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .5rem center;
+  padding-right: 2rem;
+}
+.setting-select:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(62,207,142,.1); }
+
+/* ── Tone pills ────────────────────────────────────────── */
+.tone-row {
+  display: flex; gap: .4rem; flex-wrap: wrap;
+}
+.tone-pill {
+  padding: .4rem .85rem;
+  border-radius: 99px;
+  background: rgba(0,0,0,.03);
+  border: 1.5px solid transparent;
+  font-weight: 800; font-size: .72rem;
+  transition: all .2s;
+  color: var(--tg-text);
+}
+.tone-pill:active { transform: scale(.93); }
+.tone-pill.selected {
+  background: rgba(62,207,142,.08);
+  border-color: var(--green);
+  color: var(--green2);
+  box-shadow: 0 2px 10px rgba(62,207,142,.15);
+}
+
+/* ── Task management list ──────────────────────────────── */
+.managed-task {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .65rem 0;
+  border-bottom: 1px solid rgba(0,0,0,.04);
+  animation: slide-up .35s cubic-bezier(.22,1,.36,1) both;
+}
+.managed-task:last-child { border-bottom: none; }
+.mt-info { flex: 1; min-width: 0; }
+.mt-title { font-weight: 800; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-time  { font-size: .68rem; color: var(--tg-hint); font-weight: 600; margin-top: .15rem; }
+.mt-delete {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: rgba(249,96,96,.08);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s; flex-shrink: 0;
+}
+.mt-delete:active { transform: scale(.85); background: rgba(249,96,96,.18); }
+.mt-delete svg { width: 16px; height: 16px; color: var(--red); }
