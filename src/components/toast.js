@@ -5,17 +5,21 @@
 /**
  * Show a toast notification
  * @param {string} message
- * @param {'success'|'error'|'xp'} type
+ * @param {'success'|'error'|'xp'|'warn'} type
  * @param {number} duration — ms
  */
 export function showToast(message, type = 'success', duration = 2500) {
   const container = document.getElementById('toast-container');
   if (!container) return;
 
+  // Remove existing toasts to avoid stacking
+  container.querySelectorAll('.toast').forEach(t => t.remove());
+
   const iconMap = {
     success: `<svg viewBox="0 0 24 24" fill="#3ECF8E"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>`,
     error: `<svg viewBox="0 0 24 24" fill="#F96060"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`,
     xp: `<svg viewBox="0 0 24 24" fill="#F9B43A"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+    warn: `<svg viewBox="0 0 24 24" fill="#FFB43A"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
   };
 
   const toast = document.createElement('div');

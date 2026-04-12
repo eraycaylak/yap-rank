@@ -221,6 +221,22 @@ function bindTaskEvents() {
   });
 }
 
+// ── Fun messages for early completion attempts ──
+const EARLY_MESSAGES = [
+  'Sakin ol şampiyon! ⏰ Henüz vakti gelmedi',
+  'Hızlı davranıyorsun ama kurallar kurallar! 😄',
+  'Sabırlı ol, vaktinde yapınca 2 kat tatmin 💪',
+  'Görev saatine kadar bekle, sonra patlatırsın! 🔥',
+  'Erken kalkan yol alır ama bu görev henüz hazır değil 😅',
+  'Biraz daha sabret, neredeyse zamanı gelecek ⏳',
+  'Acelenin bu sefer XP getirmez, saatinde gel! 🎯',
+  'Henüz 30dk kuralı aktif, biraz sonra dene 🚀',
+];
+
+function getEarlyMessage() {
+  return EARLY_MESSAGES[Math.floor(Math.random() * EARLY_MESSAGES.length)];
+}
+
 async function completeTask(occId) {
   const user = getTgUser();
   if (!user || !occId) return;
@@ -236,12 +252,19 @@ async function completeTask(occId) {
 
     if (data?.error === 'TASK_NOT_YET_DUE') {
       haptic.error();
-      showToast('Henüz vakti gelmedi', 'error');
+      showToast(getEarlyMessage(), 'warn', 3000);
+
+      // Shake animation on the button
+      const btn = document.querySelector(`[data-occ="${occId}"]`);
+      if (btn) {
+        btn.style.animation = 'shake .4s';
+        setTimeout(() => btn.style.animation = '', 400);
+      }
       return;
     }
     if (data?.error) {
       haptic.error();
-      showToast('Hata oluştu', 'error');
+      showToast('Bir şeyler ters gitti 😬', 'error');
       return;
     }
 

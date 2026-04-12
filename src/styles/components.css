@@ -108,7 +108,15 @@
   border: 1px solid rgba(249,96,96,.2);
   box-shadow: 0 8px 28px rgba(0,0,0,.25);
 }
-.toast.hide { animation: fade-out .3s both; }
+.toast.warn {
+  background: linear-gradient(135deg, #2d2510 0%, #1f1a0b 100%);
+  color: #FFB43A;
+  border: 1px solid rgba(255,180,58,.25);
+  box-shadow: 0 8px 28px rgba(0,0,0,.25);
+  white-space: normal; text-align: center; max-width: 85%;
+  line-height: 1.35; padding: .75rem 1.1rem;
+}
+.toast.toast-fade-out { animation: fade-out .3s both; }
 @keyframes fade-out { to { opacity: 0; transform: translateX(-50%) translateY(8px); } }
 
 /* ── Confetti canvas ───────────────────────────────────── */
