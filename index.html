@@ -1,599 +1,603 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YAP! — Lider Tablosu & Rank</title>
-  <meta name="description" content="YAP! Habit Bot — Gerçek kullanıcı sıralamaları ve ilerleme takibi" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>YAP! — Rank & Lider Tablosu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:       #06080f;
-      --panel:    rgba(14, 20, 34, 0.9);
-      --border:   rgba(99,179,255,0.1);
-      --accent:   #3b82f6;
-      --accent2:  #8b5cf6;
-      --gold:     #f59e0b;
-      --silver:   #94a3b8;
-      --bronze:   #cd7c2f;
-      --red:      #ef4444;
-      --green:    #22c55e;
-      --cyan:     #06b6d4;
-      --text:     #e2e8f0;
-      --muted:    #64748b;
-    }
-    html,body { min-height:100vh; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; overflow-x:hidden; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    /* BG Effects */
-    body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-      background:
-        radial-gradient(ellipse 70% 50% at 15% 25%, rgba(59,130,246,.09) 0%, transparent 65%),
-        radial-gradient(ellipse 50% 40% at 85% 70%, rgba(139,92,246,.07) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 50% 100%, rgba(245,158,11,.05) 0%, transparent 60%);
-    }
-    .grid-bg {
-      position:fixed; inset:0; z-index:0; pointer-events:none;
-      background-image: linear-gradient(rgba(59,130,246,.035) 1px,transparent 1px),
-                        linear-gradient(90deg,rgba(59,130,246,.035) 1px,transparent 1px);
-      background-size: 60px 60px;
-    }
-    .particles { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
-    .particle {
-      position:absolute; border-radius:50%;
-      animation:float-p linear infinite; opacity:0;
-    }
-    @keyframes float-p {
-      0%   { transform:translateY(100vh) scale(0); opacity:0; }
-      10%  { opacity:.8; }
-      90%  { opacity:.4; }
-      100% { transform:translateY(-10vh) scale(1); opacity:0; }
+    :root{
+      --bg:      #f0f4ff;
+      --card:    #ffffff;
+      --green:   #3ecf8e;
+      --green2:  #2db97d;
+      --blue:    #5b8af6;
+      --red:     #f96060;
+      --purple:  #9b6bf9;
+      --orange:  #ffb43a;
+      --text:    #1a1f36;
+      --sub:     #8492b4;
+      --gold:    #f9b43a;
+      --shadow:  0 4px 24px rgba(80,100,180,.10);
+      --shadow-sm: 0 2px 12px rgba(80,100,180,.07);
     }
 
-    /* Layout */
-    .app { position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:2rem 1.5rem 5rem; animation:fadein .7s ease; }
-    @keyframes fadein { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+    html,body{
+      min-height:100vh;
+      background:linear-gradient(160deg,#e8eeff 0%,#f5f0ff 50%,#fef4e8 100%);
+      font-family:'Nunito',sans-serif;
+      color:var(--text);
+    }
 
-    /* Header */
-    .header { text-align:center; margin-bottom:2.5rem; }
-    .logo {
-      font-family:'Orbitron',monospace; font-size:clamp(2.2rem,5vw,3.5rem); font-weight:900;
-      background:linear-gradient(135deg,#3b82f6,#8b5cf6,#06b6d4);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-      filter:drop-shadow(0 0 30px rgba(59,130,246,.5));
-      animation:logo-glow 3s ease-in-out infinite;
+    /* ── Phone frame ─────────────────────────────────────────── */
+    .phone-wrap{
+      display:flex; justify-content:center; align-items:flex-start;
+      padding:2rem 1rem 5rem; gap:2rem; flex-wrap:wrap;
     }
-    @keyframes logo-glow {
-      0%,100%{filter:drop-shadow(0 0 20px rgba(59,130,246,.4))}
-      50%{filter:drop-shadow(0 0 50px rgba(139,92,246,.7))}
+    .phone{
+      width:390px; min-height:820px;
+      background:var(--card); border-radius:2.5rem;
+      box-shadow:0 20px 80px rgba(40,60,180,.18), 0 2px 0 rgba(255,255,255,.8) inset;
+      overflow:hidden; display:flex; flex-direction:column;
+      position:relative;
     }
-    .logo-sub { font-family:'Rajdhani',sans-serif; font-size:.9rem; color:var(--muted); letter-spacing:.4em; text-transform:uppercase; margin-top:.3rem; }
-    .divider { width:200px; height:1px; background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent); margin:1.2rem auto 0; animation:line-glow 2s ease-in-out infinite alternate; }
-    @keyframes line-glow { from{opacity:.5} to{opacity:1; box-shadow:0 0 15px var(--accent)} }
 
-    /* Live badge */
-    .live-badge {
-      display:inline-flex; align-items:center; gap:.4rem;
-      background:rgba(34,197,94,.1); border:1px solid rgba(34,197,94,.3);
-      border-radius:99px; padding:.25rem .75rem; font-size:.7rem;
-      font-family:'Rajdhani',sans-serif; font-weight:600; color:var(--green);
-      letter-spacing:.15em; text-transform:uppercase; margin-top:.75rem;
+    /* ── Top bar ─────────────────────────────────────────────── */
+    .top-bar{
+      background:linear-gradient(130deg,var(--green),#27c07a);
+      padding:1.75rem 1.5rem 3.5rem;
+      position:relative; overflow:hidden;
     }
-    .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:dot-pulse 1.5s ease infinite; }
-    @keyframes dot-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+    .top-bar::before{
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(circle at 80% -20%, rgba(255,255,255,.25) 0%, transparent 60%);
+    }
+    .top-bar-inner{ position:relative; z-index:1; }
+    .top-bar-title{
+      font-size:.7rem; font-weight:700; letter-spacing:.2em;
+      text-transform:uppercase; color:rgba(255,255,255,.75); margin-bottom:.2rem;
+    }
+    .top-bar-name{ font-size:1.5rem; font-weight:900; color:#fff; }
 
-    /* Panel */
-    .panel {
-      background:var(--panel); border:1px solid var(--border); border-radius:1.25rem;
-      padding:1.75rem; backdrop-filter:blur(20px); position:relative; overflow:hidden;
-      transition:box-shadow .3s, transform .3s;
+    /* ── Profile card ────────────────────────────────────────── */
+    .profile-card{
+      background:var(--card); border-radius:1.5rem;
+      margin:0 1.25rem; margin-top:-2.5rem;
+      box-shadow:var(--shadow); padding:1.25rem 1.25rem 1rem;
+      position:relative; z-index:10;
     }
-    .panel:hover { box-shadow:0 20px 60px rgba(0,0,0,.4), 0 0 40px rgba(59,130,246,.08); }
-    .panel::before, .panel::after {
-      content:''; position:absolute; width:18px; height:18px; border-color:var(--accent); border-style:solid; opacity:.4;
+    .profile-top{ display:flex; align-items:center; gap:1rem; }
+    .avatar-wrap{ position:relative; flex-shrink:0; }
+    .avatar{
+      width:62px; height:62px; border-radius:50%;
+      border:3px solid var(--gold);
+      background:linear-gradient(135deg,#ffe0b2,#fff3e0);
+      display:flex; align-items:center; justify-content:center;
+      font-size:2rem; box-shadow:0 4px 15px rgba(249,180,58,.35);
     }
-    .panel::before { top:10px; left:10px; border-width:2px 0 0 2px; border-radius:2px 0 0 0; }
-    .panel::after  { bottom:10px; right:10px; border-width:0 2px 2px 0; }
+    .crown{
+      position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+      font-size:1.1rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
+      animation:crown-bob 2s ease-in-out infinite;
+    }
+    @keyframes crown-bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+    .profile-info{ flex:1; }
+    .profile-name{ font-size:1.05rem; font-weight:800; }
+    .profile-rank{ font-size:.8rem; color:var(--sub); font-weight:600; }
+    .profile-stars{ margin-top:.3rem; font-size:1rem; }
+    .profile-xp{
+      background:var(--green); color:#fff; border-radius:99px;
+      padding:.35rem .9rem; font-weight:800; font-size:.9rem;
+      display:flex; align-items:center; gap:.3rem;
+      box-shadow:0 4px 14px rgba(62,207,142,.4);
+    }
 
-    .panel-title {
-      font-family:'Rajdhani',sans-serif; font-size:.7rem; font-weight:700; letter-spacing:.3em;
-      text-transform:uppercase; color:var(--muted); margin-bottom:1.25rem;
-      display:flex; align-items:center; gap:.5rem;
+    /* Streak pill */
+    .streak-row{
+      display:flex; align-items:center; gap:.6rem;
+      margin-top:.9rem; padding-top:.9rem;
+      border-top:1px solid #f0f3ff;
     }
-    .panel-title::before { content:''; width:7px; height:7px; background:var(--accent); border-radius:50%; box-shadow:0 0 8px var(--accent); flex-shrink:0; animation:dot-pulse 2s ease infinite; }
+    .streak-pill{
+      background:#fff7e6; border:1.5px solid #ffe3a0; border-radius:99px;
+      padding:.3rem .8rem; display:flex; align-items:center; gap:.3rem;
+      font-size:.78rem; font-weight:700; color:#c87000;
+    }
+    .streak-pill .fire{ font-size:.9rem; }
+    .rank-pill{
+      background:#eef2ff; border:1.5px solid #c7d2fe; border-radius:99px;
+      padding:.3rem .8rem; display:flex; align-items:center; gap:.3rem;
+      font-size:.78rem; font-weight:700; color:var(--blue);
+    }
+    .xp-bar-wrap{ flex:1; }
+    .xp-bar-label{
+      font-size:.65rem; font-weight:700; color:var(--sub);
+      display:flex; justify-content:space-between; margin-bottom:.3rem;
+    }
+    .xp-track{
+      height:7px; background:#eef2ff; border-radius:99px; overflow:hidden;
+    }
+    .xp-fill{
+      height:100%; border-radius:99px;
+      background:linear-gradient(90deg,var(--green),#27e8a0);
+      box-shadow:0 0 8px rgba(62,207,142,.5);
+      transition:width 1.5s cubic-bezier(.22,1,.36,1);
+      position:relative; overflow:hidden;
+    }
+    .xp-fill::after{
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+      animation:shimmer-light 2s infinite;
+    }
+    @keyframes shimmer-light{0%{left:-100%}100%{left:200%}}
 
-    /* Top 3 Podium */
-    .podium-section { margin-bottom:1.5rem; }
-    .podium {
-      display:flex; align-items:flex-end; justify-content:center; gap:1rem;
-      padding:1.5rem 1rem 0;
+    /* ── Stat cards ──────────────────────────────────────────── */
+    .section-title{
+      font-size:.85rem; font-weight:800; color:var(--text);
+      padding:1.1rem 1.25rem .5rem; letter-spacing:.02em;
     }
-    .podium-place {
-      display:flex; flex-direction:column; align-items:center; gap:.5rem;
-      flex:1; max-width:200px;
+    .stats-grid{
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:.75rem; padding:0 1.25rem;
     }
-    .podium-avatar {
+    .stat-card{
+      border-radius:1.25rem; padding:1.1rem 1.1rem .9rem;
+      color:#fff; position:relative; overflow:hidden;
+      box-shadow:0 6px 20px rgba(0,0,0,.12);
+      transition:transform .2s, box-shadow .2s;
+      cursor:default;
+    }
+    .stat-card:active{transform:scale(.97)}
+    .stat-card::before{
+      content:''; position:absolute; top:-20px; right:-20px;
       width:70px; height:70px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center; font-size:1.8rem;
-      position:relative; border:2px solid;
-      box-shadow: 0 0 30px currentColor;
-      animation:avatar-float 3s ease-in-out infinite;
+      background:rgba(255,255,255,.12);
     }
-    .podium-place:nth-child(2) .podium-avatar { width:88px; height:88px; font-size:2.2rem; animation-delay:-.5s; }
-    .podium-place:nth-child(3) .podium-avatar { animation-delay:-1s; }
-    @keyframes avatar-float {
-      0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
+    .stat-card::after{
+      content:''; position:absolute; bottom:-15px; right:10px;
+      width:50px; height:50px; border-radius:50%;
+      background:rgba(255,255,255,.08);
     }
-    .p1 { color:var(--gold);   border-color:var(--gold);   background:rgba(245,158,11,.1); }
-    .p2 { color:#c0c0c0; border-color:#aaa;  background:rgba(160,160,160,.1); }
-    .p3 { color:var(--bronze); border-color:var(--bronze); background:rgba(205,124,47,.1); }
-
-    .crown { position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:1.2rem; animation:crown-spin 4s ease-in-out infinite; }
-    @keyframes crown-spin { 0%,100%{transform:translateX(-50%) rotate(-5deg)} 50%{transform:translateX(-50%) rotate(5deg)} }
-
-    .podium-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:1rem; text-align:center; }
-    .podium-xp {
-      font-family:'Orbitron',monospace; font-size:.8rem; font-weight:700; text-align:center;
+    .card-blue   {background:linear-gradient(135deg,#5b8af6,#3b6ef0)}
+    .card-red    {background:linear-gradient(135deg,#f96060,#e04040)}
+    .card-purple {background:linear-gradient(135deg,#9b6bf9,#7b4be0)}
+    .card-orange {background:linear-gradient(135deg,#ffb43a,#f69520)}
+    .card-label{
+      font-size:.65rem; font-weight:700; opacity:.8;
+      text-transform:uppercase; letter-spacing:.15em; margin-bottom:.4rem;
+      display:flex; align-items:center; gap:.3rem;
     }
-    .podium-rank-label { font-size:.65rem; letter-spacing:.15em; color:var(--muted); text-transform:uppercase; }
-
-    .podium-block {
-      width:100%; border-radius:.75rem .75rem 0 0; display:flex; align-items:center; justify-content:center;
-      font-family:'Orbitron',monospace; font-size:1.4rem; font-weight:900;
-      border-top:2px solid; padding:.75rem 0;
+    .card-icon-wrap{
+      position:absolute; top:.8rem; right:.8rem;
+      width:28px; height:28px; border-radius:8px;
+      background:rgba(255,255,255,.2); display:flex; align-items:center;
+      justify-content:center; font-size:.9rem;
     }
-    .b1 { height:100px; background:linear-gradient(to top, rgba(245,158,11,.2), rgba(245,158,11,.05)); border-color:rgba(245,158,11,.4); color:var(--gold); }
-    .b2 { height:80px;  background:linear-gradient(to top, rgba(160,160,160,.15), rgba(160,160,160,.03)); border-color:rgba(160,160,160,.3); color:#aaa; }
-    .b3 { height:60px;  background:linear-gradient(to top, rgba(205,124,47,.15), rgba(205,124,47,.03)); border-color:rgba(205,124,47,.3); color:var(--bronze); }
-
-    /* Leaderboard Table */
-    .lb-table { width:100%; border-collapse:collapse; }
-    .lb-table th {
-      font-family:'Rajdhani',sans-serif; font-size:.65rem; font-weight:600; letter-spacing:.25em;
-      text-transform:uppercase; color:var(--muted); padding:.5rem .75rem; text-align:left;
-      border-bottom:1px solid var(--border);
+    .card-num{
+      font-size:2rem; font-weight:900; line-height:1;
+      font-family:'Poppins',sans-serif;
     }
-    .lb-table th:last-child, .lb-table td:last-child { text-align:right; }
-    .lb-row {
-      border-bottom:1px solid rgba(255,255,255,.04);
-      transition:background .2s;
-      animation:row-in .5s both;
+    .card-sub{ font-size:.7rem; opacity:.8; margin-top:.2rem; font-weight:600; }
+
+    /* ── Tab bar ─────────────────────────────────────────────── */
+    .tab-bar{
+      margin-top:auto; background:var(--card);
+      border-top:1px solid #eef2ff;
+      display:flex; padding:.75rem 0 1rem;
     }
-    .lb-row:hover { background:rgba(59,130,246,.07); }
-    @keyframes row-in { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:none} }
-    .lb-row td { padding:.85rem .75rem; vertical-align:middle; }
-
-    .rank-num {
-      font-family:'Orbitron',monospace; font-size:.9rem; font-weight:700; width:36px;
-      text-align:center;
+    .tab{
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:.25rem;
+      font-size:.6rem; font-weight:700; color:var(--sub); cursor:pointer;
+      text-transform:uppercase; letter-spacing:.1em; transition:color .2s;
     }
-    .r1 { color:var(--gold); text-shadow:0 0 12px var(--gold); }
-    .r2 { color:#c0c0c0; text-shadow:0 0 10px #aaa; }
-    .r3 { color:var(--bronze); text-shadow:0 0 10px var(--bronze); }
-    .rn { color:var(--muted); }
+    .tab.active{ color:var(--green); }
+    .tab-icon{ font-size:1.3rem; }
 
-    .player-info { display:flex; align-items:center; gap:.75rem; }
-    .player-avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; border:1px solid rgba(255,255,255,.08); }
-    .player-name { font-weight:600; font-size:.95rem; }
-    .player-handle { font-size:.75rem; color:var(--muted); font-family:'Rajdhani',sans-serif; }
-
-    .level-chip {
-      display:inline-flex; align-items:center; gap:.25rem;
-      background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.25);
-      border-radius:99px; padding:.15rem .55rem;
-      font-family:'Orbitron',monospace; font-size:.6rem; color:var(--accent); white-space:nowrap;
+    /* ── Phone 2: Leaderboard ────────────────────────────────── */
+    .lb-header{
+      background:linear-gradient(130deg,var(--green),#27c07a);
+      padding:1.75rem 1.5rem 1.5rem; position:relative; overflow:hidden;
     }
-    .xp-val { font-family:'Orbitron',monospace; font-size:.9rem; font-weight:700; color:var(--cyan); }
-    .streak-val { font-family:'Orbitron',monospace; font-size:.85rem; font-weight:700; }
-    .streak-val.hot { color:var(--gold); text-shadow:0 0 10px var(--gold); }
-    .streak-val.cold { color:var(--muted); }
-
-    /* My rank bar */
-    .my-rank-card {
-      background:linear-gradient(135deg, rgba(59,130,246,.12), rgba(139,92,246,.08));
-      border:1px solid rgba(139,92,246,.3); border-radius:1rem; padding:1.25rem;
-      display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+    .lb-header::before{
+      content:''; position:absolute; inset:0;
+      background:radial-gradient(circle at 80% -30%,rgba(255,255,255,.2) 0%,transparent 60%);
     }
-    .my-rank-pos { font-family:'Orbitron',monospace; font-size:2rem; font-weight:900; color:var(--accent2); text-shadow:0 0 20px var(--accent2); min-width:50px; }
-    .my-rank-info { flex:1; min-width:120px; }
-    .my-rank-name { font-weight:700; font-size:1.1rem; }
-    .my-rank-sub { font-size:.8rem; color:var(--muted); margin-top:.15rem; font-family:'Rajdhani',sans-serif; }
-
-    /* Progress bar */
-    .progress-wrap { flex:2; min-width:160px; }
-    .prog-label { display:flex; justify-content:space-between; font-size:.7rem; color:var(--muted); margin-bottom:.35rem; font-family:'Rajdhani',sans-serif; letter-spacing:.1em; }
-    .prog-track {
-      height:10px; background:rgba(255,255,255,.05); border-radius:99px;
-      border:1px solid rgba(255,255,255,.04); overflow:hidden;
-      box-shadow:inset 0 2px 4px rgba(0,0,0,.4);
+    .lb-header-inner{ position:relative; z-index:1; }
+    .lb-header-row{ display:flex; align-items:center; gap:.75rem; }
+    .lb-avatar{
+      width:48px; height:48px; border-radius:50%;
+      border:2.5px solid rgba(255,255,255,.7);
+      background:#fff3e0; display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; position:relative; flex-shrink:0;
     }
-    .prog-fill {
-      height:100%; border-radius:99px; position:relative; overflow:hidden;
-      transition:width 1.8s cubic-bezier(.22,1,.36,1);
+    .lb-header-name{ font-size:1rem; font-weight:800; color:#fff; }
+    .lb-header-rank{ font-size:.75rem; color:rgba(255,255,255,.8); font-weight:600; }
+    .lb-header-stars{ font-size:.9rem; margin-top:.15rem; }
+    .lb-icons{ margin-left:auto; display:flex; gap:.5rem; }
+    .lb-icon-btn{
+      width:32px; height:32px; border-radius:8px;
+      background:rgba(255,255,255,.2); border:none; color:#fff;
+      display:flex; align-items:center; justify-content:center; cursor:pointer;
+      font-size:1rem; transition:background .2s;
     }
-    .prog-fill::after { content:''; position:absolute; top:0; left:0; right:0; height:45%; background:linear-gradient(to bottom,rgba(255,255,255,.25),transparent); border-radius:99px; }
-    .prog-fill::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.15) 50%,transparent 100%); animation:shimmer 2s infinite; left:-100%; }
-    @keyframes shimmer { to{left:200%} }
-    .fill-xp     { background:linear-gradient(90deg,#3b82f6,#06b6d4); box-shadow:0 0 12px rgba(59,130,246,.5); }
-    .fill-streak { background:linear-gradient(90deg,#f59e0b,#ef4444); box-shadow:0 0 12px rgba(245,158,11,.5); }
+    .lb-icon-btn:hover{background:rgba(255,255,255,.3)}
 
-    /* 3D Rank badge */
-    .badge-3d {
-      display:inline-flex; align-items:center; justify-content:center;
-      position:relative; width:80px; height:80px; flex-shrink:0;
-      transform-style:preserve-3d;
-      animation:badge-float 4s ease-in-out infinite;
+    /* Leaderboard list */
+    .lb-list{ flex:1; overflow-y:auto; padding:.5rem 0; }
+    .lb-list::-webkit-scrollbar{width:4px}
+    .lb-list::-webkit-scrollbar-track{background:transparent}
+    .lb-list::-webkit-scrollbar-thumb{background:#e0e5ff;border-radius:99px}
+
+    .lb-item{
+      display:flex; align-items:center; gap:.9rem;
+      padding:.85rem 1.25rem;
+      border-bottom:1px solid #f5f7ff;
+      transition:background .15s;
+      animation:row-in .4s both;
     }
-    @keyframes badge-float { 0%,100%{transform:rotateY(-8deg) rotateX(4deg)} 50%{transform:rotateY(8deg) rotateX(-4deg) translateY(-6px)} }
-    .badge-ring {
-      position:absolute; inset:0; border-radius:50%; border:2px solid transparent; animation:ring-spin 6s linear infinite;
+    .lb-item:hover{background:#fafbff}
+    @keyframes row-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .lb-item.me{
+      background:linear-gradient(90deg,rgba(62,207,142,.12),rgba(62,207,142,.06));
+      border-left:3px solid var(--green);
+      border-bottom:none;
+      margin:0; border-radius:0;
     }
-    .badge-ring.r1 { border-color:transparent var(--gold) transparent var(--gold); filter:drop-shadow(0 0 6px var(--gold)); }
-    .badge-ring.r2 { inset:8px; border-color:transparent var(--accent) transparent var(--accent); animation-duration:4s; animation-direction:reverse; opacity:.5; }
-    @keyframes ring-spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-    .badge-inner-small {
-      width:56px; height:56px; border-radius:50%;
-      background:radial-gradient(circle at 35% 35%, rgba(255,255,255,.1), rgba(0,0,0,.5));
-      border:1px solid rgba(245,158,11,.4);
-      display:flex; flex-direction:column; align-items:center; justify-content:center;
-      box-shadow:inset 0 2px 8px rgba(255,255,255,.08), 0 0 25px rgba(245,158,11,.2);
-      font-family:'Orbitron',monospace;
+
+    .lb-rank{
+      font-size:1.1rem; font-weight:900; min-width:26px; text-align:center;
+      font-family:'Poppins',sans-serif; color:var(--sub);
     }
-    .badge-lv { font-size:.55rem; color:var(--muted); color:var(--gold); letter-spacing:.1em; }
-    .badge-num { font-size:1.1rem; font-weight:900; background:linear-gradient(135deg,var(--gold),#fff,var(--gold2,#fbbf24)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
-
-    /* Main grid */
-    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
-    @media(max-width:750px) { .main-grid { grid-template-columns:1fr; } }
-    .full { grid-column:1/-1; }
-
-    /* Loading state */
-    .loading { text-align:center; padding:3rem; }
-    .spinner {
-      width:48px; height:48px; border:3px solid rgba(59,130,246,.2);
-      border-top-color:var(--accent); border-radius:50%;
-      animation:spin .9s linear infinite; margin:0 auto 1rem;
+    .lb-rank.r1{color:var(--gold)}
+    .lb-rank.r2{color:#9eaac7}
+    .lb-rank.r3{color:#cd7c2f}
+    .lb-rank.me-rank{
+      background:var(--green); color:#fff; border-radius:8px;
+      width:28px; height:28px; display:flex; align-items:center; justify-content:center;
+      font-size:.8rem;
     }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .loading-text { font-family:'Orbitron',monospace; font-size:.75rem; color:var(--muted); letter-spacing:.2em; }
 
-    /* Error */
-    .error-msg { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); border-radius:.75rem; padding:1rem; color:var(--red); font-size:.85rem; text-align:center; }
-
-    /* Empty state */
-    .empty { text-align:center; padding:2rem; color:var(--muted); font-family:'Rajdhani',sans-serif; font-size:.9rem; }
-
-    /* Achievement popup */
-    .ach-pop {
-      position:fixed; bottom:2rem; right:2rem;
-      background:var(--panel); border:1px solid rgba(245,158,11,.5);
-      border-radius:1rem; padding:1rem 1.25rem;
-      display:flex; align-items:center; gap:.75rem; max-width:260px;
-      backdrop-filter:blur(20px); box-shadow:0 0 40px rgba(245,158,11,.2);
-      transform:translateX(130%); transition:transform .5s cubic-bezier(.22,1,.36,1); z-index:200;
+    .lb-user-avatar{
+      width:42px; height:42px; border-radius:50%;
+      border:2px solid #eef2ff; flex-shrink:0;
+      background:#f5f7ff; display:flex; align-items:center; justify-content:center;
+      font-size:1.3rem; position:relative;
     }
-    .ach-pop.show { transform:translateX(0); }
-    .ach-emoji { font-size:1.8rem; }
-    .ach-t { font-family:'Orbitron',monospace; font-size:.6rem; color:var(--gold); letter-spacing:.1em; }
-    .ach-n { font-family:'Rajdhani',sans-serif; font-size:.95rem; font-weight:700; margin-top:.1rem; }
+    .lb-user-avatar.top{border-color:var(--gold); box-shadow:0 2px 10px rgba(249,180,58,.3);}
+    .lb-user-mini-crown{
+      position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+      font-size:.65rem;
+    }
 
-    /* Scan line */
-    .scanline { position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px); pointer-events:none; z-index:100; }
+    .lb-info{flex:1}
+    .lb-name{
+      font-weight:800; font-size:.95rem;
+      display:flex; align-items:center; gap:.4rem;
+    }
+    .lb-name.me-name{color:var(--green2)}
+    .lb-score{
+      font-size:.75rem; font-weight:700; color:var(--sub); margin-top:.1rem;
+    }
+    .lb-score span{color:var(--green2); font-weight:800;}
 
-    /* Last updated */
-    .last-updated { text-align:right; font-size:.65rem; color:var(--muted); font-family:'Rajdhani',sans-serif; letter-spacing:.1em; margin-top:.5rem; }
+    .lb-follow-btn{
+      background:var(--green); color:#fff; border:none; border-radius:99px;
+      padding:.45rem 1rem; font-weight:800; font-size:.75rem; cursor:pointer;
+      box-shadow:0 4px 14px rgba(62,207,142,.35); transition:all .2s;
+      white-space:nowrap; font-family:'Nunito',sans-serif;
+    }
+    .lb-follow-btn:hover{background:var(--green2);transform:scale(1.04)}
+    .lb-trophy-btn{
+      width:42px; height:42px; border-radius:12px;
+      background:rgba(62,207,142,.15); border:1.5px solid rgba(62,207,142,.3);
+      display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+    }
+
+    /* Loading */
+    .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;gap:1rem}
+    .spinner{
+      width:40px;height:40px;border:3px solid #eef2ff;
+      border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-txt{font-size:.8rem;font-weight:700;color:var(--sub);letter-spacing:.1em}
+
+    /* Responsive */
+    @media(max-width:860px){
+      .phone-wrap{flex-direction:column;align-items:center}
+    }
+    @media(max-width:420px){
+      .phone{width:100%;border-radius:0;min-height:100vh}
+      .phone-wrap{padding:0}
+    }
   </style>
 </head>
 <body>
-  <div class="scanline"></div>
-  <div class="grid-bg"></div>
-  <div class="particles" id="particles"></div>
+<div class="phone-wrap">
 
-  <div class="ach-pop" id="achPop">
-    <div class="ach-emoji">🏆</div>
-    <div>
-      <div class="ach-t">LİDER TABLOSU</div>
-      <div class="ach-n" id="achText">Veriler yüklendi</div>
+  <!-- ── PHONE 1: Profile & Stats ─────────────────────────── -->
+  <div class="phone" id="phone1">
+    <!-- Top green bar -->
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <div class="top-bar-title">YAP! Profil</div>
+        <div class="top-bar-name" id="p1Name">Yükleniyor...</div>
+      </div>
+    </div>
+
+    <!-- Profile card -->
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="avatar-wrap">
+          <div class="avatar" id="p1Avatar">🏆</div>
+          <div class="crown" id="p1Crown">👑</div>
+        </div>
+        <div class="profile-info">
+          <div class="profile-name" id="p1DisplayName">—</div>
+          <div class="profile-rank" id="p1RankTitle">—</div>
+          <div class="profile-stars" id="p1Stars">⭐⭐⭐</div>
+        </div>
+        <div class="profile-xp" id="p1XP">
+          <span id="p1XPNum">—</span> ⭐
+        </div>
+      </div>
+      <div class="streak-row">
+        <div class="streak-pill">
+          <span class="fire">🔥</span>
+          <span id="p1Streak">0 Gün Seri</span>
+        </div>
+        <div class="rank-pill">
+          🥇 <span id="p1Pos">#1</span>
+        </div>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label">
+            <span>Seviye XP</span>
+            <span id="p1Pct">0%</span>
+          </div>
+          <div class="xp-track">
+            <div class="xp-fill" id="p1Bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="section-title">İstatistikler</div>
+    <div class="stats-grid">
+      <div class="stat-card card-blue">
+        <div class="card-label"><span>⭐</span> Toplam XP</div>
+        <div class="card-icon-wrap">⚡</div>
+        <div class="card-num" id="s1XP">—</div>
+        <div class="card-sub">deneyim puanı</div>
+      </div>
+      <div class="stat-card card-red">
+        <div class="card-label"><span>🏅</span> Rozet</div>
+        <div class="card-icon-wrap">🏅</div>
+        <div class="card-num" id="s1Badges">—</div>
+        <div class="card-sub">kazanılan</div>
+      </div>
+      <div class="stat-card card-purple">
+        <div class="card-label"><span>📊</span> Sıralama</div>
+        <div class="card-icon-wrap">📊</div>
+        <div class="card-num" id="s1Rank">—</div>
+        <div class="card-sub">lider tablosunda</div>
+      </div>
+      <div class="stat-card card-orange">
+        <div class="card-label"><span>✅</span> Görevler</div>
+        <div class="card-icon-wrap">✅</div>
+        <div class="card-num" id="s1Tasks">—</div>
+        <div class="card-sub">tamamlanan</div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div style="height:1.25rem"></div>
+    <div class="tab-bar">
+      <div class="tab active"><div class="tab-icon">🏠</div>Ana Sayfa</div>
+      <div class="tab" onclick="showPhone(2)"><div class="tab-icon">🏆</div>Sıralama</div>
+      <div class="tab"><div class="tab-icon">🏅</div>Ödüller</div>
+      <div class="tab"><div class="tab-icon">📩</div>Bildirim</div>
     </div>
   </div>
 
-  <div class="app">
-    <header class="header">
-      <div class="logo">YAP!</div>
-      <div class="logo-sub">Lider Tablosu & Rank Sistemi</div>
-      <div class="divider"></div>
-      <div class="live-badge"><div class="live-dot"></div> Canlı Veri</div>
-    </header>
+  <!-- ── PHONE 2: Leaderboard ──────────────────────────────── -->
+  <div class="phone" id="phone2">
+    <!-- Header -->
+    <div class="lb-header">
+      <div class="lb-header-inner">
+        <div class="lb-header-row">
+          <div class="lb-avatar" id="p2Avatar">🏆
+            <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:.85rem">👑</div>
+          </div>
+          <div>
+            <div class="lb-header-name" id="p2Name">Yükleniyor</div>
+            <div class="lb-header-rank" id="p2Rank">—</div>
+            <div class="lb-header-stars" id="p2Stars">⭐⭐</div>
+          </div>
+          <div class="lb-icons">
+            <button class="lb-icon-btn" onclick="loadData()">🔄</button>
+            <button class="lb-icon-btn">🔍</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div id="root">
+    <!-- List -->
+    <div class="lb-list" id="lbList">
       <div class="loading">
         <div class="spinner"></div>
-        <div class="loading-text">Veriler Yükleniyor...</div>
+        <div class="loading-txt">Veriler Çekiliyor...</div>
       </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="tab-bar">
+      <div class="tab" onclick="showPhone(1)"><div class="tab-icon">🏠</div>Ana Sayfa</div>
+      <div class="tab active"><div class="tab-icon">🏆</div>Sıralama</div>
+      <div class="tab"><div class="tab-icon">🎖️</div>Ödüller</div>
+      <div class="tab"><div class="tab-icon">📩</div>Bildirim</div>
     </div>
   </div>
 
-  <script>
-  // ── Config ──────────────────────────────────────────────────
-  const SUPABASE_URL  = 'https://txkhnectxqpjhfipdydq.supabase.co';
-  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4a2huZWN0eHFwamhmaXBkeWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NTUyOTUsImV4cCI6MjA5MTUzMTI5NX0.d_4W8md2BzpB9ysnpmWUZyT2vkoWXuPft0xeP1Lrl8I';
+</div>
 
-  const LEVELS = [
-    {l:1,xp:0,t:'Yeni Başlayan',i:'🌱'},{l:2,xp:100,t:'Toparlanan',i:'🔰'},
-    {l:3,xp:250,t:'Takipte',i:'👁️'},{l:4,xp:450,t:'Çabalayan',i:'💪'},
-    {l:5,xp:700,t:'Düzenli',i:'📋'},{l:6,xp:1000,t:'Sağlamcı',i:'🛡️'},
-    {l:7,xp:1350,t:'İnatçı',i:'⚡'},{l:8,xp:1750,t:'Odakçı',i:'🥊'},
-    {l:9,xp:2200,t:'Disiplinci',i:'🧘'},{l:10,xp:2700,t:'YAP! Çırağı',i:'🎯'},
-    {l:11,xp:3300,t:'Seri Kuran',i:'🔥'},{l:12,xp:4000,t:'İradeci',i:'⚔️'},
-    {l:13,xp:4800,t:'Güçlü Rutinci',i:'🏋️'},{l:14,xp:5700,t:'Düzen Ustası',i:'🌟'},
-    {l:15,xp:6700,t:'YAP! Ustası',i:'👑'},{l:16,xp:7800,t:'İcra Makinesi',i:'🤖'},
-    {l:17,xp:9000,t:'Çelik Rutin',i:'💎'},{l:18,xp:10300,t:'Sistem Adamı',i:'🧠'},
-    {l:19,xp:11700,t:'Bitirici',i:'💀'},{l:20,xp:13200,t:'YAP! Komutanı',i:'🏆'},
-  ];
+<script>
+const SUPABASE_URL = 'https://txkhnectxqpjhfipdydq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4a2huZWN0eHFwamhmaXBkeWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5NTUyOTUsImV4cCI6MjA5MTUzMTI5NX0.d_4W8md2BzpB9ysnpmWUZyT2vkoWXuPft0xeP1Lrl8I';
 
-  function getLvl(xp) {
-    let cur = LEVELS[0];
-    for (const l of LEVELS) { if (xp >= l.xp) cur = l; else break; }
-    return cur;
-  }
-  function getNextLvl(xp) {
-    for (const l of LEVELS) { if (l.xp > xp) return l; }
-    return null;
-  }
-  function lvlPct(xp) {
-    const cur = getLvl(xp), nxt = getNextLvl(xp);
-    if (!nxt) return 100;
-    return Math.round(((xp - cur.xp) / (nxt.xp - cur.xp)) * 100);
-  }
-  const STREAK_MILESTONES = [3,7,14,21,30,45,60,90,120,180,365];
-  function seriPct(streak) {
-    const nxt = STREAK_MILESTONES.find(m => m > streak) ?? 365;
-    const prv = [...STREAK_MILESTONES].reverse().find(m => m <= streak) ?? 0;
-    return Math.round(((streak - prv) / (nxt - prv)) * 100);
-  }
-  function numFmt(n) { return Number(n||0).toLocaleString('tr'); }
+const LEVELS = [
+  {l:1,xp:0,t:'Yeni Başlayan'},{l:2,xp:100,t:'Toparlanan'},{l:3,xp:250,t:'Takipte'},
+  {l:4,xp:450,t:'Çabalayan'},{l:5,xp:700,t:'Düzenli'},{l:6,xp:1000,t:'Sağlamcı'},
+  {l:7,xp:1350,t:'İnatçı'},{l:8,xp:1750,t:'Odakçı'},{l:9,xp:2200,t:'Disiplinci'},
+  {l:10,xp:2700,t:'YAP! Çırağı'},{l:11,xp:3300,t:'Seri Kuran'},{l:12,xp:4000,t:'İradeci'},
+  {l:13,xp:4800,t:'Güçlü Rutinci'},{l:14,xp:5700,t:'Düzen Ustası'},{l:15,xp:6700,t:'YAP! Ustası'},
+  {l:16,xp:7800,t:'İcra Makinesi'},{l:17,xp:9000,t:'Çelik Rutin'},{l:18,xp:10300,t:'Sistem Adamı'},
+  {l:19,xp:11700,t:'Bitirici'},{l:20,xp:13200,t:'YAP! Komutanı'},
+];
+const AVATARS = ['🌱','🔰','👁️','💪','📋','🛡️','⚡','🥊','🧘','🎯','🔥','⚔️','🏋️','🌟','👑','🤖','💎','🧠','💀','🏆'];
 
-  // Avatar emojis per level
-  function avatarFor(lvl) {
-    const icons = ['🌱','🔰','👁️','💪','📋','🛡️','⚡','🥊','🧘','🎯','🔥','⚔️','🏋️','🌟','👑','🤖','💎','🧠','💀','🏆'];
-    return icons[Math.min(lvl-1, icons.length-1)] ?? '🎮';
-  }
-  function avatarBg(rank) {
-    if (rank===1) return 'rgba(245,158,11,.15)';
-    if (rank===2) return 'rgba(180,180,180,.12)';
-    if (rank===3) return 'rgba(205,124,47,.12)';
-    return 'rgba(59,130,246,.08)';
-  }
-  function avatarBorder(rank) {
-    if (rank===1) return '#f59e0b';
-    if (rank===2) return '#aaa';
-    if (rank===3) return '#cd7c2f';
-    return 'rgba(59,130,246,.3)';
-  }
+function getLvl(xp) {
+  let c = LEVELS[0];
+  for (const l of LEVELS) { if (xp >= l.xp) c = l; else break; }
+  return c;
+}
+function getNext(xp) { return LEVELS.find(l => l.xp > xp) || null; }
+function pct(xp) {
+  const c = getLvl(xp), n = getNext(xp);
+  if (!n) return 100;
+  return Math.round(((xp - c.xp) / (n.xp - c.xp)) * 100);
+}
+function stars(level) {
+  const filled = Math.min(5, Math.ceil(level / 4));
+  return '⭐'.repeat(filled) + '☆'.repeat(5 - filled);
+}
+function avatar(level) { return AVATARS[Math.min(level-1, AVATARS.length-1)]; }
+function fmt(n) { return Number(n||0).toLocaleString('tr'); }
 
-  // ── Fetch ───────────────────────────────────────────────────
-  async function fetchLeaderboard() {
+function animN(el, to, delay=0) {
+  const target = parseInt(to)||0;
+  let n = 0;
+  setTimeout(() => {
+    if (target === 0) { el.textContent = '0'; return; }
+    const step = Math.max(1, Math.round(target / 50));
+    const t = setInterval(() => {
+      n = Math.min(n + step, target);
+      el.textContent = fmt(n);
+      if (n >= target) clearInterval(t);
+    }, 18);
+  }, delay);
+}
+
+function showPhone(n) {
+  // On mobile, scroll to relevant phone
+  document.getElementById('phone'+n).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+async function loadData() {
+  try {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/leaderboard?select=*&order=rank.asc&limit=50`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      {headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}}
     );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
+    const data = await res.json();
+    if (!data || data.error) throw new Error(data?.message||'API hatası');
+    renderAll(data);
+  } catch(e) {
+    document.getElementById('lbList').innerHTML =
+      `<div class="loading"><div style="color:#f96060;font-size:2rem">⚠️</div><div class="loading-txt" style="color:#f96060">${e.message}</div></div>`;
   }
+}
 
-  // ── Render ──────────────────────────────────────────────────
-  function animateNum(el, to, delay=0) {
-    let n = 0;
-    setTimeout(() => {
-      const step = Math.max(1, Math.round(to / 60));
-      const t = setInterval(() => {
-        n = Math.min(n + step, to);
-        el.textContent = numFmt(n);
-        if (n >= to) clearInterval(t);
-      }, 16);
-    }, delay);
-  }
+function renderAll(data) {
+  if (!data.length) return;
+  const top = data[0]; // leaderboard #1 player shown in headers
 
-  function render(data) {
-    const top3  = data.slice(0, 3);
-    const rest  = data.slice(3);
-    const total = data.length;
-    const top   = data[0];
+  // ── Phone 1 header ─────────────────────────────────────────
+  const topLvl = getLvl(top.total_xp||0);
+  const topNext = getNext(top.total_xp||0);
+  const topPct  = pct(top.total_xp||0);
 
-    const now = new Date().toLocaleString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+  setText('p1Name',        `Merhaba, ${top.first_name||'Anonim'}! 👋`);
+  setText('p1DisplayName', top.first_name||'Anonim');
+  setText('p1RankTitle',   topLvl.t);
+  setText('p1Stars',       stars(top.level||1));
+  setText('p1Streak',      `${top.current_streak||0} Gün Seri`);
+  setText('p1Pos',         `#${top.rank}`);
+  setText('p1Pct',         `${topPct}%`);
+  document.getElementById('p1Avatar').textContent = avatar(top.level||1);
+  document.getElementById('p1Crown').style.display = top.rank === 1 ? '' : 'none';
 
-    // ── Podium HTML ────────────────────────────────────────────
-    const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean); // 2-1-3 order
-    const podiumClass = ['p2 b2','p1 b1','p3 b3'];
-    const podiumRankNum = [2, 1, 3];
-    const podiumCrown  = [false, true, false];
+  animN(document.getElementById('p1XPNum'), top.total_xp, 100);
+  animN(document.getElementById('s1XP'),    top.total_xp, 200);
+  animN(document.getElementById('s1Badges'), top.rank <= 3 ? top.rank * 2 : 1, 300);
+  animN(document.getElementById('s1Rank'),  top.rank, 400);
+  animN(document.getElementById('s1Tasks'), top.completed_tasks, 500);
 
-    let podiumHtml = podiumOrder.map((p, idx) => {
-      if (!p) return '';
-      const lvl = getLvl(p.total_xp);
-      const bc  = podiumClass[idx].split(' ');
-      return `
-      <div class="podium-place">
-        <div class="podium-avatar ${bc[0]}" style="border-color:${avatarBorder(podiumRankNum[idx])};color:${avatarBorder(podiumRankNum[idx])};">
-          ${podiumCrown[idx] ? '<div class="crown">👑</div>' : ''}
-          ${avatarFor(p.level||1)}
-        </div>
-        <div class="podium-name">${p.first_name || 'Anonim'}</div>
-        <div class="podium-xp" style="color:${avatarBorder(podiumRankNum[idx])}">${numFmt(p.total_xp)} XP</div>
-        <div class="podium-rank-label">${lvl.t}</div>
-        <div class="podium-block ${bc[1]}">${podiumRankNum[idx] === 1 ? '🥇' : podiumRankNum[idx] === 2 ? '🥈' : '🥉'}</div>
-      </div>`;
-    }).join('');
+  setTimeout(() => {
+    document.getElementById('p1Bar').style.width = topPct + '%';
+  }, 600);
 
-    // ── Table rows ─────────────────────────────────────────────
-    let tableRows = rest.map((p, idx) => {
-      const rank = idx + 4;
-      const lvl  = getLvl(p.total_xp);
-      const rankCls = rank<=3 ? `r${rank}` : 'rn';
-      const streakCls = (p.current_streak||0) > 0 ? 'hot' : 'cold';
-      return `
-      <tr class="lb-row" style="animation-delay:${idx*0.04}s">
-        <td><div class="rank-num ${rankCls}">${rank}</div></td>
-        <td>
-          <div class="player-info">
-            <div class="player-avatar" style="background:${avatarBg(rank)};border-color:${avatarBorder(rank)}">
-              ${avatarFor(p.level||1)}
-            </div>
-            <div>
-              <div class="player-name">${p.first_name || 'Anonim'}</div>
-              <div class="player-handle">@${p.telegram_username || '—'}</div>
-            </div>
-          </div>
-        </td>
-        <td><span class="level-chip">Sv${p.level||1} ${lvl.i}</span></td>
-        <td><span class="xp-val" data-xp="${p.total_xp||0}">0</span></td>
-        <td><span class="streak-val ${streakCls}">${p.current_streak||0} 🔥</span></td>
-        <td style="color:var(--green);font-family:'Orbitron',monospace;font-size:.85rem">${p.completed_tasks||0}</td>
-      </tr>`;
-    }).join('');
+  // ── Phone 2 header ─────────────────────────────────────────
+  document.getElementById('p2Avatar').textContent = avatar(top.level||1);
+  setText('p2Name', top.first_name||'Anonim');
+  setText('p2Rank', topLvl.t);
+  setText('p2Stars', stars(top.level||1));
 
-    // ── My rank (first entry, treat as "me" for demo) ─────────
-    const me = data[0];
-    let myRankHtml = '';
-    if (me) {
-      const myLvl  = getLvl(me.total_xp);
-      const myNext = getNextLvl(me.total_xp);
-      const myPct  = lvlPct(me.total_xp);
-      const mySPct = seriPct(me.current_streak||0);
-      myRankHtml = `
-      <div class="my-rank-card">
-        <div class="badge-3d">
-          <div class="badge-ring r1"></div>
-          <div class="badge-ring r2"></div>
-          <div class="badge-inner-small">
-            <div class="badge-lv">SV</div>
-            <div class="badge-num">${me.level||1}</div>
-          </div>
-        </div>
-        <div class="my-rank-pos">#${me.rank}</div>
-        <div class="my-rank-info">
-          <div class="my-rank-name">${me.first_name || 'Anonim'}</div>
-          <div class="my-rank-sub">${myLvl.t} · ${numFmt(me.total_xp)} XP</div>
-        </div>
-        <div class="progress-wrap">
-          <div class="prog-label">
-            <span>⭐ Seviye XP</span>
-            <span id="xpPctLbl" style="color:var(--cyan)">${myPct}%</span>
-          </div>
-          <div class="prog-track">
-            <div class="prog-fill fill-xp" id="xpBar" style="width:0%"></div>
-          </div>
-          <div class="prog-label" style="margin-top:.5rem">
-            <span>🔥 Seri</span>
-            <span id="seriPctLbl" style="color:var(--gold)">${mySPct}%</span>
-          </div>
-          <div class="prog-track">
-            <div class="prog-fill fill-streak" id="seriBar" style="width:0%"></div>
-          </div>
-        </div>
-      </div>`;
+  // ── Leaderboard list ────────────────────────────────────────
+  const ME_RANK = data[0].rank; // Treat top as "me" for demo - in production connect to Telegram
+  let html = '';
+
+  data.forEach((p, idx) => {
+    const isMe = p.rank === ME_RANK;
+    const lvl  = getLvl(p.total_xp||0);
+    const isTop = p.rank <= 3;
+
+    let rankEl;
+    if (isMe) {
+      rankEl = `<div class="lb-rank me-rank">${p.rank}</div>`;
+    } else if (p.rank <= 3) {
+      const medals = ['🥇','🥈','🥉'];
+      rankEl = `<div class="lb-rank r${p.rank}">${medals[p.rank-1]}</div>`;
+    } else {
+      rankEl = `<div class="lb-rank">${p.rank}</div>`;
     }
 
-    document.getElementById('root').innerHTML = `
-    <div class="main-grid">
+    const avatarEl = `
+      <div class="lb-user-avatar ${isTop?'top':''}">
+        ${avatar(p.level||1)}
+        ${p.rank === 1 ? '<div class="lb-user-mini-crown">👑</div>' : ''}
+      </div>`;
 
-      <!-- PODIUM -->
-      <div class="panel full podium-section">
-        <div class="panel-title">🏆 Top 3 Savaşçı</div>
-        <div class="podium">${podiumHtml || '<div class="empty">Yeterli kullanıcı yok henüz</div>'}</div>
+    const actionEl = isMe
+      ? `<div class="lb-trophy-btn">🏆</div>`
+      : `<button class="lb-follow-btn">Takip</button>`;
+
+    html += `
+    <div class="lb-item ${isMe?'me':''}" style="animation-delay:${idx*.04}s">
+      ${rankEl}
+      ${avatarEl}
+      <div class="lb-info">
+        <div class="lb-name ${isMe?'me-name':''}">${p.first_name||'Anonim'}${p.rank<=3?' 👑':''}</div>
+        <div class="lb-score">XP: <span>${fmt(p.total_xp||0)}</span> · 🔥 ${p.current_streak||0} gün</div>
       </div>
-
-      <!-- LB TABLE (4+) -->
-      ${rest.length > 0 ? `
-      <div class="panel full">
-        <div class="panel-title">📋 Genel Sıralama</div>
-        <div style="overflow-x:auto">
-          <table class="lb-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Oyuncu</th>
-                <th>Rank</th>
-                <th>XP</th>
-                <th>🔥 Seri</th>
-                <th>✅ Görev</th>
-              </tr>
-            </thead>
-            <tbody id="lbBody">${tableRows}</tbody>
-          </table>
-        </div>
-        <div class="last-updated">Son güncelleme: ${now}</div>
-      </div>` : ''}
-
-    </div>
-    <div style="margin-top:1.5rem" class="panel">
-      <div class="panel-title">👤 Lider Oyuncu</div>
-      ${myRankHtml}
-    </div>
-    <div style="margin-top:.75rem; text-align:center; font-size:.65rem; color:var(--muted); font-family:'Rajdhani',sans-serif; letter-spacing:.1em">
-      ${total} aktif kullanıcı · Veriler Supabase'den canlı çekiliyor
+      ${actionEl}
     </div>`;
+  });
 
-    // Animate XP numbers
-    document.querySelectorAll('[data-xp]').forEach((el, i) => {
-      animateNum(el, parseInt(el.dataset.xp)||0, i*50);
-    });
+  document.getElementById('lbList').innerHTML = html || '<div class="loading"><div class="loading-txt">Kullanıcı bulunamadı</div></div>';
+}
 
-    // Animate bars
-    setTimeout(() => {
-      const xpB = document.getElementById('xpBar');
-      const sB  = document.getElementById('seriBar');
-      if (xpB && me) { xpB.style.width = lvlPct(me.total_xp) + '%'; }
-      if (sB  && me) { sB.style.width  = seriPct(me.current_streak||0) + '%'; }
-    }, 500);
-  }
+function setText(id, txt) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
 
-  // ── Particles ───────────────────────────────────────────────
-  function createParticles() {
-    const c = document.getElementById('particles');
-    const colors = ['#3b82f6','#8b5cf6','#06b6d4','#f59e0b'];
-    for (let i = 0; i < 25; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      const sz = Math.random()*3+1, col = colors[Math.floor(Math.random()*colors.length)];
-      p.style.cssText = `width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;animation-duration:${9+Math.random()*14}s;animation-delay:${Math.random()*10}s;box-shadow:0 0 ${sz*3}px ${col}`;
-      c.appendChild(p);
-    }
-  }
-
-  function showAch(text) {
-    const pop = document.getElementById('achPop');
-    document.getElementById('achText').textContent = text;
-    pop.classList.add('show');
-    setTimeout(()=>pop.classList.remove('show'), 4500);
-  }
-
-  // ── Main ────────────────────────────────────────────────────
-  createParticles();
-
-  fetchLeaderboard()
-    .then(data => {
-      if (!data || data.error) throw new Error(data?.message || 'API hatası');
-      render(data);
-      if (data.length > 0) {
-        setTimeout(() => showAch(`${data.length} savaşçı sıralandı! 🔥`), 1500);
-      }
-    })
-    .catch(err => {
-      document.getElementById('root').innerHTML = `
-        <div class="error-msg">
-          ⚠️ Veri yüklenemedi: ${err.message}<br>
-          <small style="color:var(--muted);margin-top:.5rem;display:block">Supabase bağlantısı kontrol ediliyor...</small>
-        </div>`;
-      console.error(err);
-    });
-
-  // Auto-refresh every 60s
-  setInterval(() => {
-    fetchLeaderboard().then(data => { if(data && !data.error) render(data); }).catch(()=>{});
-  }, 60000);
-  </script>
+// Auto-refresh every 60s
+loadData();
+setInterval(loadData, 60000);
+</script>
 </body>
 </html>
