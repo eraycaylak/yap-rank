@@ -8,8 +8,18 @@ export function initTelegram() {
   if (!tg) return;
   tg.ready();
   tg.expand();
-  if (tg.setHeaderColor) tg.setHeaderColor('#1E9960');
-  if (tg.setBackgroundColor) tg.setBackgroundColor('#F0F4FF');
+
+  // ── Dark mode detection ──
+  const isDark = tg.colorScheme === 'dark';
+  if (isDark) {
+    document.documentElement.classList.add('tg-dark');
+    if (tg.setHeaderColor) tg.setHeaderColor('#0F172A');
+    if (tg.setBackgroundColor) tg.setBackgroundColor('#0F172A');
+  } else {
+    if (tg.setHeaderColor) tg.setHeaderColor('#1E9960');
+    if (tg.setBackgroundColor) tg.setBackgroundColor('#F0F4FF');
+  }
+
   if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
 
   // ── Apply safe area CSS variables ──

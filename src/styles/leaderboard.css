@@ -42,7 +42,7 @@
 }
 
 .lb-info { flex: 1; min-width: 0; }
-.lb-name { font-weight: 900; font-size: .9rem; display: flex; align-items: center; gap: .3rem; }
+.lb-name { font-weight: 900; font-size: .9rem; display: flex; align-items: center; gap: .3rem; color: var(--tg-text); }
 .lb-name.me-name {
   background: linear-gradient(135deg, var(--green2), var(--green));
   -webkit-background-clip: text;

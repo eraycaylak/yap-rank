@@ -8,7 +8,10 @@ img, svg { display: block; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 input, select, textarea { font-family: inherit; }
 
-/* ── Theme Variables ────────────────────────────────────── */
+/* ── Prevent zoom ──────────────────────────────────────── */
+html { touch-action: manipulation; -ms-touch-action: manipulation; }
+
+/* ── Light Theme Variables ─────────────────────────────── */
 :root {
   --tg-bg:          var(--tg-theme-bg-color, #F0F4FF);
   --tg-text:        var(--tg-theme-text-color, #1A1F36);
@@ -27,8 +30,18 @@ input, select, textarea { font-family: inherit; }
   --purple:    #9B6BF9;
   --orange:    #FFB43A;
   --gold:      #F9B43A;
+
+  /* ── Surface colors — theme-aware ── */
   --white:     #FFFFFF;
   --dark:      #1A1F36;
+  --card-bg:   #FFFFFF;
+  --card-border: rgba(0,0,0,.04);
+  --input-bg:  #FFFFFF;
+  --input-text: #1A1F36;
+  --input-border: rgba(0,0,0,.08);
+  --input-focus: rgba(62,207,142,.15);
+  --divider:   rgba(0,0,0,.04);
+  --overlay:   rgba(15,23,42,.5);
 
   /* ── Shadows ── */
   --shadow:     0 8px 32px rgba(60,80,180,.12);
@@ -46,6 +59,58 @@ input, select, textarea { font-family: inherit; }
   --radius-xs: .5rem;
 }
 
+/* ══════════════════════════════════════════════════════════
+   DARK THEME — Midnight Blue
+   ══════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tg-bg:          var(--tg-theme-bg-color, #0F172A);
+    --tg-text:        var(--tg-theme-text-color, #E2E8F0);
+    --tg-hint:        var(--tg-theme-hint-color, #64748B);
+    --tg-secondary:   var(--tg-theme-secondary-bg-color, #1E293B);
+
+    --card-bg:   #1E293B;
+    --card-border: rgba(255,255,255,.06);
+    --white:     #1E293B;
+    --input-bg:  #1E293B;
+    --input-text: #E2E8F0;
+    --input-border: rgba(255,255,255,.1);
+    --input-focus: rgba(62,207,142,.2);
+    --divider:   rgba(255,255,255,.06);
+    --overlay:   rgba(0,0,0,.65);
+
+    --shadow:     0 8px 32px rgba(0,0,0,.35);
+    --shadow-sm:  0 4px 16px rgba(0,0,0,.25);
+    --shadow-lg:  0 12px 48px rgba(0,0,0,.45);
+    --glass-bg:   rgba(30,41,59,.85);
+    --glass-border: rgba(255,255,255,.08);
+  }
+}
+
+/* JS-applied dark class for Telegram SDK detection */
+html.tg-dark {
+  --tg-bg:          var(--tg-theme-bg-color, #0F172A);
+  --tg-text:        var(--tg-theme-text-color, #E2E8F0);
+  --tg-hint:        var(--tg-theme-hint-color, #64748B);
+  --tg-secondary:   var(--tg-theme-secondary-bg-color, #1E293B);
+
+  --card-bg:   #1E293B;
+  --card-border: rgba(255,255,255,.06);
+  --white:     #1E293B;
+  --input-bg:  #1E293B;
+  --input-text: #E2E8F0;
+  --input-border: rgba(255,255,255,.1);
+  --input-focus: rgba(62,207,142,.2);
+  --divider:   rgba(255,255,255,.06);
+  --overlay:   rgba(0,0,0,.65);
+
+  --shadow:     0 8px 32px rgba(0,0,0,.35);
+  --shadow-sm:  0 4px 16px rgba(0,0,0,.25);
+  --shadow-lg:  0 12px 48px rgba(0,0,0,.45);
+  --glass-bg:   rgba(30,41,59,.85);
+  --glass-border: rgba(255,255,255,.08);
+}
+
 html, body {
   height: 100%;
   background: var(--tg-bg);
@@ -54,6 +119,7 @@ html, body {
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  touch-action: manipulation;
 }
 
 /* ── App Shell ──────────────────────────────────────────── */
@@ -110,6 +176,7 @@ html, body {
 .section-title {
   font-size: .8rem; font-weight: 800; padding: 1.2rem var(--pad) .6rem;
   display: flex; align-items: center; gap: .5rem;
+  color: var(--tg-text);
 }
 .section-title::before {
   content: '';

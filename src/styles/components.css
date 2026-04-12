@@ -5,7 +5,7 @@
 /* ── Modal overlay ─────────────────────────────────────── */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(15,23,42,.5);
+  background: var(--overlay);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex; align-items: flex-end;
@@ -22,37 +22,40 @@
 }
 .modal-handle {
   width: 36px; height: 4px;
-  background: rgba(0,0,0,.1);
+  background: var(--tg-hint);
+  opacity: .3;
   border-radius: 99px;
   margin: .5rem auto .9rem;
 }
-.modal-title { font-size: 1.05rem; font-weight: 900; margin-bottom: 1.2rem; text-align: center; }
+.modal-title { font-size: 1.05rem; font-weight: 900; margin-bottom: 1.2rem; text-align: center; color: var(--tg-text); }
 
 /* ── Form elements inside modals ───────────────────────── */
 .form-group { margin-bottom: 1rem; }
 .form-label { font-size: .72rem; font-weight: 900; text-transform: uppercase; letter-spacing: .12em; color: var(--tg-hint); margin-bottom: .4rem; display: block; }
 .form-input {
   width: 100%; padding: .85rem 1rem;
-  background: var(--white);
-  border: 1.5px solid rgba(0,0,0,.06);
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1.5px solid var(--input-border);
   border-radius: .85rem;
   font-size: .92rem; font-weight: 700;
   transition: all .2s;
+  -webkit-appearance: none;
 }
 .form-input:focus {
   outline: none;
   border-color: var(--green);
-  box-shadow: 0 0 0 4px rgba(62,207,142,.1);
+  box-shadow: 0 0 0 4px var(--input-focus);
 }
-.form-input::placeholder { color: rgba(0,0,0,.2); }
+.form-input::placeholder { color: var(--tg-hint); opacity: .6; }
 
 /* Pill selector (priority, recurrence) */
 .pill-group { display: flex; gap: .4rem; flex-wrap: wrap; }
 .pill-btn {
   padding: .5rem .9rem;
   border-radius: 99px;
-  background: rgba(0,0,0,.03);
-  border: 1.5px solid rgba(0,0,0,.04);
+  background: var(--tg-secondary);
+  border: 1.5px solid var(--card-border);
   font-weight: 800; font-size: .78rem;
   transition: all .2s;
   color: var(--tg-text);

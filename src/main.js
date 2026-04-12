@@ -32,15 +32,13 @@ import { showOnboarding } from './pages/onboarding.js';
 async function loadMe() {
   try {
     const user = getTgUser();
-    if (user?.id) {
-      const r = await sbRpc('get_user_stats', { p_telegram_id: user.id });
-      const d = await r.json();
-      if (d && d[0]) return d[0];
-    }
-    // Fallback: use first leaderboard user (preview mode)
-    const r2 = await sb('/rest/v1/leaderboard?select=*&order=rank.asc&limit=1');
-    const d2 = await r2.json();
-    return d2?.[0] || null;
+    if (!user?.id) return null;
+    const r = await sbRpc('get_user_stats', { p_telegram_id: user.id });
+    const d = await r.json();
+    if (d && d[0]) return d[0];
+    // If array response (some RPCs return array)
+    if (d && !Array.isArray(d) && d.total_xp !== undefined) return d;
+    return null;
   } catch { return null; }
 }
 

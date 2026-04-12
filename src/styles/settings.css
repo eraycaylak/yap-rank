@@ -6,9 +6,9 @@
 .settings-content { padding: .5rem 0 2rem; }
 .settings-section {
   margin: .5rem 1rem; padding: .9rem;
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius);
-  box-shadow: 0 2px 16px rgba(60,80,180,.06);
+  box-shadow: var(--shadow-sm);
 }
 .settings-section-title {
   font-size: .65rem; font-weight: 900;
@@ -22,16 +22,16 @@
 .setting-row {
   display: flex; align-items: center; justify-content: space-between;
   padding: .75rem 0;
-  border-bottom: 1px solid rgba(0,0,0,.03);
+  border-bottom: 1px solid var(--divider);
 }
 .setting-row:last-child { border-bottom: none; }
-.setting-label { font-weight: 800; font-size: .85rem; flex: 1; }
+.setting-label { font-weight: 800; font-size: .85rem; flex: 1; color: var(--tg-text); }
 .setting-hint { font-size: .68rem; color: var(--tg-hint); font-weight: 600; margin-top: .2rem; }
 
 /* ── Toggle switch — Premium ───────────────────────────── */
 .toggle {
   width: 48px; height: 28px;
-  background: rgba(0,0,0,.08);
+  background: var(--tg-secondary);
   border-radius: 50px; position: relative;
   cursor: pointer; flex-shrink: 0;
   transition: background .3s;
@@ -52,9 +52,9 @@
 /* ── Select dropdown ───────────────────────────────────── */
 .setting-select {
   padding: .45rem .75rem;
-  border: 1.5px solid rgba(0,0,0,.06);
+  border: 1.5px solid var(--input-border);
   border-radius: .7rem;
-  background: rgba(0,0,0,.02);
+  background: var(--input-bg);
   font-weight: 800; font-size: .8rem;
   color: var(--tg-text);
   appearance: none;
@@ -73,7 +73,7 @@
 .tone-pill {
   padding: .4rem .85rem;
   border-radius: 99px;
-  background: rgba(0,0,0,.03);
+  background: var(--tg-secondary);
   border: 1.5px solid transparent;
   font-weight: 800; font-size: .72rem;
   transition: all .2s;
@@ -91,12 +91,12 @@
 .managed-task {
   display: flex; align-items: center; gap: .6rem;
   padding: .65rem 0;
-  border-bottom: 1px solid rgba(0,0,0,.04);
+  border-bottom: 1px solid var(--divider);
   animation: slide-up .35s cubic-bezier(.22,1,.36,1) both;
 }
 .managed-task:last-child { border-bottom: none; }
 .mt-info { flex: 1; min-width: 0; }
-.mt-title { font-weight: 800; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-title { font-weight: 800; font-size: .85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tg-text); }
 .mt-time  { font-size: .68rem; color: var(--tg-hint); font-weight: 600; margin-top: .15rem; }
 .mt-delete {
   width: 34px; height: 34px; border-radius: 10px;

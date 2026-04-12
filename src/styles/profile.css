@@ -26,7 +26,7 @@
 }
 
 .pf-info { flex: 1; min-width: 0; }
-.pf-name  { font-size: 1.05rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-name  { font-size: 1.05rem; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tg-text); }
 .pf-rank  { font-size: .75rem; color: var(--tg-hint); font-weight: 700; margin-top: .1rem; }
 .pf-stars { display: flex; gap: 3px; margin-top: .3rem; }
 .pf-stars svg { width: 14px; height: 14px; filter: drop-shadow(0 1px 3px rgba(249,180,58,.4)); }
@@ -69,7 +69,7 @@
 /* ── XP Progress Bar ───────────────────────────────────── */
 .xp-bar-wrap { flex: 1; }
 .xp-bar-label { display: flex; justify-content: space-between; font-size: .65rem; font-weight: 800; color: var(--tg-hint); margin-bottom: .35rem; }
-.xp-track { height: 8px; background: rgba(0,0,0,.04); border-radius: 99px; overflow: hidden; }
+.xp-track { height: 8px; background: var(--tg-secondary); border-radius: 99px; overflow: hidden; }
 .xp-fill {
   height: 100%; border-radius: 99px;
   background: linear-gradient(90deg, var(--green), #27E8A0, var(--green));
@@ -133,7 +133,7 @@
 .activity-list { padding: .3rem 1rem; }
 .activity-item {
   display: flex; align-items: center; gap: .8rem;
-  padding: .85rem 0; border-bottom: 1px solid rgba(0,0,0,.04);
+  padding: .85rem 0; border-bottom: 1px solid var(--divider);
 }
 .act-icon {
   width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
@@ -145,7 +145,7 @@
 .act-icon.pending   { background: rgba(245,158,11,.08); }
 .act-icon.skipped   { background: rgba(100,116,139,.06); }
 .act-info { flex: 1; }
-.act-title  { font-weight: 800; font-size: .88rem; }
+.act-title  { font-weight: 800; font-size: .88rem; color: var(--tg-text); }
 .act-time   { font-size: .7rem; color: var(--tg-hint); margin-top: .1rem; font-weight: 600; }
 .act-status { font-size: .6rem; font-weight: 900; border-radius: 99px; padding: .22rem .6rem; letter-spacing: .03em; }
 .s-completed { background: rgba(34,197,94,.12); color: #16a34a; }
