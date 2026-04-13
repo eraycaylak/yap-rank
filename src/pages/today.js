@@ -152,6 +152,38 @@ export function renderToday(tasks) {
   bindTaskEvents();
 }
 
+function parseTaskTitle(rawTitle) {
+  if (!rawTitle) return { icon: null, title: 'Görev' };
+  const sep = rawTitle.indexOf('::');
+  if (sep === -1) return { icon: null, title: rawTitle };
+  return { icon: rawTitle.substring(0, sep), title: rawTitle.substring(sep + 2) };
+}
+
+function getIconSrc(iconId) {
+  // Map known icon IDs to their SVG paths
+  const map = {
+    apple: '/assets/svg/apple.svg',
+    running: '/assets/svg/running.svg',
+    dumbbell: '/assets/svg/dumbbell.svg',
+    coffee: '/assets/svg/coffee.svg',
+    egg: '/assets/svg/egg-svgrepo-com.svg',
+    bread: '/assets/svg/bread-svgrepo-com.svg',
+    chicken: '/assets/svg/chicken-svgrepo-com.svg',
+    fish: '/assets/svg/fish-svgrepo-com.svg',
+    cake: '/assets/svg/cake-svgrepo-com.svg',
+    orange: '/assets/svg/orange-svgrepo-com.svg',
+    strawberry: '/assets/svg/strawberry-svgrepo-com.svg',
+    pizza: '/assets/svg/pizza-svgrepo-com.svg',
+    lemon: '/assets/svg/lemon-svgrepo-com.svg',
+    carrot: '/assets/svg/carrot-svgrepo-com.svg',
+    grape: '/assets/svg/grape-svgrepo-com.svg',
+    hamburger: '/assets/svg/hamburger-svgrepo-com.svg',
+    hotdog: '/assets/svg/hot-dog-svgrepo-com.svg',
+    lollipop: '/assets/svg/lollipop-svgrepo-com.svg',
+  };
+  return map[iconId] || null;
+}
+
 function renderTaskItem(task, idx) {
   const time = fmtTime(task.scheduled_time);
   const isDone = task.status === 'completed';
@@ -160,6 +192,12 @@ function renderTaskItem(task, idx) {
   const p = task.priority || 2;
   const available = !isDone && !isSkipped && !isMissed && isTaskAvailable(task.scheduled_time);
   const minsLeft = minutesUntilAvailable(task.scheduled_time);
+
+  const { icon, title } = parseTaskTitle(task.title);
+  const iconSrc = getIconSrc(icon);
+  const iconHTML = iconSrc
+    ? `<div class="task-icon"><img src="${iconSrc}" alt="" loading="lazy"/></div>`
+    : '';
 
   let btnHTML = '';
   if (isDone) {
@@ -178,9 +216,10 @@ function renderTaskItem(task, idx) {
     <div class="task-item p${p}-border ${isDone ? 'completed' : ''} ${isSkipped ? 'skipped' : ''} animate-in" 
          style="animation-delay:${idx * .04}s"
          data-task-id="${task.task_id}" data-occ-id="${task.occurrence_id}">
+      ${iconHTML}
       <div class="task-time">${time}</div>
       <div class="task-info">
-        <div class="task-title">${task.title || 'Görev'}</div>
+        <div class="task-title">${title}</div>
         <div class="task-meta">
           <span class="task-priority p${p}">${PRIORITY_LABELS[p]}</span>
           ${recLabel ? `<span class="task-recurrence">${recLabel}</span>` : ''}

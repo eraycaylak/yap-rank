@@ -53,10 +53,13 @@ export async function renderSettings() {
   ).join('');
 
   const taskListHTML = tasks.length > 0
-    ? tasks.map((t, i) => `
+    ? tasks.map((t, i) => {
+      const sep = (t.title || '').indexOf('::');
+      const displayTitle = sep > -1 ? t.title.substring(sep + 2) : t.title;
+      return `
       <div class="managed-task animate-in" style="animation-delay:${i * .03}s" data-task-id="${t.id}">
         <div class="mt-info">
-          <div class="mt-title">${t.title}</div>
+          <div class="mt-title">${displayTitle}</div>
           <div class="mt-time">${fmtTime(t.scheduled_time)} · ${PRIORITY_LABELS[t.priority || 2]} · ${RECURRENCE_LABELS[t.recurrence_type] || ''}</div>
         </div>
         <button class="mt-delete" data-delete-id="${t.id}" aria-label="Sil">
@@ -64,8 +67,8 @@ export async function renderSettings() {
             <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
           </svg>
         </button>
-      </div>
-    `).join('')
+      </div>`;
+    }).join('')
     : '<p style="color:var(--tg-hint);font-size:.8rem;font-weight:600;padding:.5rem 0">Henüz görev yok</p>';
 
   container.innerHTML = `
