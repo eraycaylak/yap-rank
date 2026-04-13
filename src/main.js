@@ -62,7 +62,7 @@ async function init() {
   setState({ me, lb, todayTasks, loaded: true });
 
   // 4. Check onboarding
-  const needsOnboarding = me && me.onboarding_done === false;
+  const needsOnboarding = me && !me.onboarding_done;
   if (needsOnboarding) {
     showOnboarding(async () => {
       // After onboarding, reload everything
@@ -74,6 +74,8 @@ async function init() {
       renderLeaderboard(lb, freshMe);
       renderBadges(freshMe);
     });
+    // Don't render pages behind the overlay
+    return;
   }
 
   // 5. Render initial pages
