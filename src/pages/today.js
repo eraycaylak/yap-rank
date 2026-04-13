@@ -34,6 +34,9 @@ export function renderToday(tasks) {
   const container = document.getElementById('today-content');
   if (!container) return;
 
+  // Ensure tasks is always a valid array
+  if (!Array.isArray(tasks)) tasks = [];
+
   const me = getState().me;
   const user = getTgUser();
   const photo = getTgPhoto();

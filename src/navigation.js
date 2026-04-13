@@ -1,11 +1,8 @@
-// ════════════════════════════════════════════════════════════
-// NAVIGATION — Tab switching, MainButton, BackButton
-// ════════════════════════════════════════════════════════════
 import { haptic } from './lib/haptic.js';
 import { tg, getTgUser } from './lib/telegram.js';
 import { fmt } from './lib/utils.js';
 import { getState, setState } from './state.js';
-import { renderToday, setFabVisible } from './pages/today.js';
+import { renderToday, loadTodayTasks, setFabVisible } from './pages/today.js';
 import { renderProfile } from './pages/profile.js';
 import { renderLeaderboard } from './pages/leaderboard.js';
 import { renderBadges } from './pages/badges.js';
@@ -54,8 +51,14 @@ export function switchTab(tab) {
   // Show FAB only on today tab
   setFabVisible(tab === 'today');
 
-  // Lazy-load page content
-  if (tab === 'today') renderToday(state.me);  // always re-fetch tasks
+  // ── Lazy-load page content ──
+  if (tab === 'today') {
+    // Fetch fresh tasks then render
+    loadTodayTasks().then(tasks => {
+      setState({ todayTasks: tasks });
+      renderToday(tasks);
+    }).catch(() => renderToday(state.todayTasks || []));
+  }
   if (tab === 'profile' && state.me) renderProfile(state.me);
   if (tab === 'lb') renderLeaderboard(state.lb, state.me);
   if (tab === 'badges' && state.me) renderBadges(state.me);
